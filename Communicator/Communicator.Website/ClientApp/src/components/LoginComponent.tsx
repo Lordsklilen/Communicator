@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Label, FormGroup, Input, Button } from 'reactstrap';
 import * as LoginStore from '../store/Login';
 import { RouteComponentProps } from 'react-router';
-import { ApplicationState } from '../store';
+import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 
 type LoginProps =
@@ -10,7 +10,7 @@ type LoginProps =
     typeof LoginStore.actionCreators & 
     RouteComponentProps<{}>;
 
-class Home extends React.Component<LoginProps, LoginStore.LoginState> {
+class LoginComponent extends React.Component<LoginProps, LoginStore.LoginState> {
  
     state: Readonly<LoginStore.LoginState> = {
         email: this.props.email,
@@ -19,10 +19,16 @@ class Home extends React.Component<LoginProps, LoginStore.LoginState> {
 
     handleOnChangeEmail(event: React.FormEvent<HTMLInputElement>) {
         console.log(event.currentTarget.value);
+        this.setState({
+            email: event.currentTarget.value
+        } as LoginStore.LoginState);
     }
 
     handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
         console.log(event.currentTarget.value);
+        this.setState({
+            password: event.currentTarget.value
+        } as LoginStore.LoginState);
     }
 
     public render() {
@@ -37,13 +43,13 @@ class Home extends React.Component<LoginProps, LoginStore.LoginState> {
                         <Input
                             autoFocus
                             type="email"
-                            onChange={this.handleOnChangeEmail} 
+                            onChange={this.handleOnChangeEmail.bind(this)} 
                         />
                     </FormGroup>
                     <FormGroup>
                         <Label>Password</Label>
                         <Input
-                            onChange={this.handleOnChangePassword}
+                                onChange={this.handleOnChangePassword.bind(this)}
                             type="password"/>
                         </FormGroup>
                         <Button block type="submit">
@@ -60,4 +66,4 @@ class Home extends React.Component<LoginProps, LoginStore.LoginState> {
 export default connect(
     (state: ApplicationState) => state.login,
     LoginStore.actionCreators
-)(Home);
+)(LoginComponent);
