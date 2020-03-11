@@ -16,7 +16,15 @@ class Home extends React.Component<LoginProps, LoginStore.LoginState> {
         email: this.props.email,
         password: this.props.password
     };    
-    
+
+    handleOnChangeEmail(event: React.FormEvent<HTMLInputElement>) {
+        console.log(event.currentTarget.value);
+    }
+
+    handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
+        console.log(event.currentTarget.value);
+    }
+
     public render() {
         return (
             <React.Fragment>
@@ -29,16 +37,14 @@ class Home extends React.Component<LoginProps, LoginStore.LoginState> {
                         <Input
                             autoFocus
                             type="email"
-                            //value={this.state.email}
-                                //onChange={e => this.props.updateEmail()}
+                            onChange={this.handleOnChangeEmail} 
                         />
                     </FormGroup>
                     <FormGroup>
                         <Label>Password</Label>
                         <Input
-                                //value={this.state.password}
-                        //onChange={e => this.props.updateEmail()}
-                        type="password"/>
+                            onChange={this.handleOnChangePassword}
+                            type="password"/>
                         </FormGroup>
                         <Button block type="submit">
                             Login
