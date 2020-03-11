@@ -10,12 +10,18 @@ type LoginProps =
     typeof LoginStore.actionCreators & 
     RouteComponentProps<{}>;
 
-class Home extends React.Component<LoginProps> {
-
+class Home extends React.Component<LoginProps, LoginStore.LoginState> {
+ 
+    state: Readonly<LoginStore.LoginState> = {
+        email: this.props.email,
+        password: this.props.password
+    };    
+    
     public render() {
         return (
             <React.Fragment>
-                <title title= "Lol title"/>
+                <title title="Lol title" />
+                <h1>h1: {this.state.email} /h1</h1>
                 <div className="Login">
                     <form> 
                     <FormGroup>

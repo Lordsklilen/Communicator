@@ -33,8 +33,8 @@ export const actionCreators = {
 export const reducer: Reducer<LoginState> = (state: LoginState | undefined, incomingAction: Action): LoginState => {
     if (state === undefined) {
         return {
-            email: "",
-            password: ""
+            email: "test email",
+            password: "test pasword"
         };
     }
 
