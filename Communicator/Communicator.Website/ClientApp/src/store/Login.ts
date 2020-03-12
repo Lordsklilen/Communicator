@@ -1,46 +1,58 @@
 import { Action, Reducer } from 'redux';
+import { AppThunkAction } from './';
 
-// -----------------
-// STATE - This defines the type of data maintained in the Redux store.
-
+// STATE
 export interface LoginState {
     email: string;
     password: string;
 }
 
-// -----------------
-// ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
-// They do not themselves have any side-effects; they just describe something that is going to happen.
-// Use @typeName and isActionType for type detection that works even after serialization/deserialization.
+// ACTIONS
+export interface RequestAuthenticateAction {
+    type: 'RequestAuthenticate_action',
+    email: string
+    password: string
+}
+export interface ResponseAuthenticateAction {
+    type: 'ResponseAuthenticate_action',
+    message: string
+}
 
-export interface UpdateAction { type: 'UPDATE_STORE' }
+export type KnownAction = RequestAuthenticateAction | ResponseAuthenticateAction;
 
-// Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
-// declared type strings (and not any other arbitrary string).
-export type KnownAction = UpdateAction;
-
-//// ----------------
-//// ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
-//// They don't directly mutate state, but they can have external side-effects (such as loading data).
-
+// ACTION CREATORS
 export const actionCreators = {
-    updateEmail: () => ({ type: 'UPDATE_STORE' } as UpdateAction),
+    RequestAuthenticate: (email: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        };
+        fetch('/User/Api/Authenticate', requestOptions)
+            .then(response => response.text())
+            .then(data => {
+                dispatch({ type: 'ResponseAuthenticate_action', message: data });
+            });
+    }
 };
 
-//// ----------------
-//// REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
-
+// REDUCER
 export const reducer: Reducer<LoginState> = (state: LoginState | undefined, incomingAction: Action): LoginState => {
     if (state === undefined) {
         return {
-            email: "test email",
-            password: "test pasword"
+            email: "",
+            password: ""
         };
     }
 
     const action = incomingAction as KnownAction;
     switch (action.type) {
-        case 'UPDATE_STORE':
+        case 'ResponseAuthenticate_action':
+            console.log("response recived, with message: " + action.message)
             return { email: state.email, password: state.password };
         default:
             return state;

@@ -1,19 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using System.Text.Json;
 namespace Communicator.Website.Controllers
 {
+
+    public class DTO
+    {
+        public string email;
+        public string password;
+    }
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        public UserController()
+        [HttpPost]
+        [Route("Api/Authenticate")]
+        public string Authenticate([FromBody] JsonElement json)
         {
+            var request = ToObject<DTO>(json);
+            return $"Email {request.email} authenticated with password: {request.password}";
         }
 
-        [HttpGet]
-        public string Test()
-        {
-            return "site testing";
-        }
     }
 }
