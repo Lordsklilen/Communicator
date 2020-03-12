@@ -1,23 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Communicator.Service.DTO;
+using Communicator.Service.PublicInterfaces;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 namespace Communicator.Website.Controllers
 {
 
-    public class DTO
-    {
-        public string email;
-        public string password;
-    }
     [ApiController]
     [Route("[controller]")]
     public class UserController : BaseController
     {
+
+        private readonly IUserService _userService;
+        public UserController(IUserService service)
+        {
+            _userService = service;
+        }
+
         [HttpPost]
         [Route("Api/Authenticate")]
         public string Authenticate([FromBody] JsonElement json)
         {
-            var request = ToObject<DTO>(json);
-            return $"Email {request.email} authenticated with password: {request.password}";
+            var request = ToObject<RequestAuthenticateUser>(json);
+            return PrepareResponse(_userService.AuthenticateUser(request));
         }
 
     }

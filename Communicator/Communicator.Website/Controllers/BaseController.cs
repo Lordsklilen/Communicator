@@ -6,7 +6,6 @@ namespace Communicator.Website.Controllers
 {
     public abstract partial class BaseController : Controller
     {
-
         [HttpGet]
         public bool Ping()
         {
@@ -17,6 +16,9 @@ namespace Communicator.Website.Controllers
             var j = json.GetRawText();
             return JsonConvert.DeserializeObject<T>(j);
         }
-
+        protected string PrepareResponse(object response)
+        {
+            return JsonConvert.SerializeObject(response);
+        }
     }
 }

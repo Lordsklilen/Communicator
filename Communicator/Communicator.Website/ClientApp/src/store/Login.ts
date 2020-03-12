@@ -1,5 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
+import { Status } from './Models/Status';
 
 // STATE
 export interface LoginState {
@@ -13,9 +14,12 @@ export interface RequestAuthenticateAction {
     email: string
     password: string
 }
+
 export interface ResponseAuthenticateAction {
     type: 'ResponseAuthenticate_action',
-    message: string
+    message: string,
+    status: Status
+
 }
 
 export type KnownAction = RequestAuthenticateAction | ResponseAuthenticateAction;
@@ -33,9 +37,13 @@ export const actionCreators = {
             })
         };
         fetch('/User/Api/Authenticate', requestOptions)
-            .then(response => response.text())
+            .then(response => response.json() as Promise<ResponseAuthenticateAction>)
             .then(data => {
-                dispatch({ type: 'ResponseAuthenticate_action', message: data });
+                dispatch({
+                    type: 'ResponseAuthenticate_action',
+                    message: data.message,
+                    status: data.status as Status
+                });
             });
     }
 };
@@ -52,7 +60,7 @@ export const reducer: Reducer<LoginState> = (state: LoginState | undefined, inco
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'ResponseAuthenticate_action':
-            console.log("response recived, with message: " + action.message)
+            console.log("response recived, with message: " + action.message + ", with status: " + action.status)
             return { email: state.email, password: state.password };
         default:
             return state;
