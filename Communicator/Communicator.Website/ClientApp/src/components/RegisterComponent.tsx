@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Label, FormGroup, Input, Button } from 'reactstrap';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Redirect } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 import * as RegisterStore from '../store/Register';
@@ -18,23 +18,30 @@ type RegisterProps =
 class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
 
     state: Readonly<RegisterState> = {
-        email: this.props.email,
-        password: this.props.password,
-        errorMessage: this.props.errorMessage
+        errorMessage: this.props.errorMessage,
+        redirect: this.props.redirect
     };
 
     createUser(event: React.FormEvent<HTMLInputElement>) {
         var errorMsg = this.validateFields();
-        if (errorMsg === "") {
-            console.log("user created");
-
-        }
         this.setState({
             errorMessage: errorMsg
         } as RegisterState);
+        if (errorMsg === "") {
+            var email = (document.getElementById("registerEmail") as HTMLInputElement).value;
+            var password = (document.getElementById("registerPasswordInput") as HTMLInputElement).value;
+            this.props.RequestCreateUser(email, password);
+            console.log("user created");
+
+        }
 
     }
 
+    renderRedirect(){
+        if (this.props.redirect) {
+            return <Redirect to='/messages' />
+        }
+    }
 
     handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
         this.setState({
@@ -94,7 +101,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                         </form>
                     </div>
                 </div>
-
+                {this.renderRedirect()}
             </React.Fragment>
         );
     }

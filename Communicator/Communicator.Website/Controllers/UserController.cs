@@ -23,5 +23,13 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestAuthenticateUser>(json);
             return PrepareResponse(_userService.AuthenticateUser(request));
         }
+
+        [HttpPost]
+        [Route("Api/CreateUser")]
+        public string CreateUser([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestCreateUser>(json);
+            return PrepareResponse(_userService.CreateUser(request));
+        }
     }
 }

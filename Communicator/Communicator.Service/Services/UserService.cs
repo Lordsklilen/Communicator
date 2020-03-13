@@ -14,5 +14,15 @@ namespace Communicator.Service.Services
             };
             return response;
         }
+
+        public ResponseCreateUser CreateUser(RequestCreateUser request)
+        {
+            var response = new ResponseCreateUser()
+            {
+                message = $"Authentication for {request.email} has been succesfull",
+                status = ResponseStatus.Success
+            };
+            return response;
+        }
     }
 }

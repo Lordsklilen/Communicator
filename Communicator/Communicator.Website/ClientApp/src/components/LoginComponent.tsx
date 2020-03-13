@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Label, FormGroup, Input, Button } from 'reactstrap';
 import * as LoginStore from '../store/Login';
 import { LoginState } from '../store/Login';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Redirect } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 
@@ -19,7 +19,8 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     state: Readonly<LoginState> = {
         email: this.props.email,
-        password: this.props.password
+        password: this.props.password,
+        redirect: this.props.redirect
     };
 
     handleOnChangeEmail(event: React.FormEvent<HTMLInputElement>) {
@@ -34,6 +35,12 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
         this.setState({
             password: event.currentTarget.value
         } as LoginState);
+    }
+
+    renderRedirect() {
+        if (this.props.redirect) {
+            return <Redirect to='/messages' />
+        }
     }
 
     authenticate(event: React.FormEvent<HTMLInputElement>) {
@@ -70,6 +77,7 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                     </div>
                 </div>
 
+                {this.renderRedirect()}
             </React.Fragment>
         );
     }

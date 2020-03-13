@@ -6,6 +6,7 @@ import { Status } from './Models/Status';
 export interface LoginState {
     email: string;
     password: string;
+    redirect: boolean;
 }
 
 // ACTIONS
@@ -53,7 +54,8 @@ export const reducer: Reducer<LoginState> = (state: LoginState | undefined, inco
     if (state === undefined) {
         return {
             email: "",
-            password: ""
+            password: "",
+            redirect: false
         };
     }
 
@@ -61,7 +63,11 @@ export const reducer: Reducer<LoginState> = (state: LoginState | undefined, inco
     switch (action.type) {
         case 'ResponseAuthenticate_action':
             console.log("response recived, with message: " + action.message + ", with status: " + action.status)
-            return { email: state.email, password: state.password };
+            return {
+                email: state.email,
+                password: state.password,
+                redirect: true
+            };
         default:
             return state;
     }
