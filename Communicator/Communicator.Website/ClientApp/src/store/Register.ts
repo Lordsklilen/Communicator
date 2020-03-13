@@ -6,6 +6,7 @@ import { Status } from './Models/Status';
 export interface RegisterState {
     email: string;
     password: string;
+    errorMessage: string;
 }
 
 // ACTIONS
@@ -52,7 +53,8 @@ export const reducer: Reducer<RegisterState> = (state: RegisterState | undefined
     if (state === undefined) {
         return {
             email: "",
-            password: ""
+            password: "",
+            errorMessage: ""
         };
     }
 
