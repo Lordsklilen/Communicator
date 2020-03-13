@@ -1,5 +1,5 @@
 import { Action, Reducer } from 'redux';
-import { AppThunkAction } from './';
+import { AppThunkAction } from './index';
 import { Status } from './Models/Status';
 
 // STATE

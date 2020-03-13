@@ -23,6 +23,5 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestAuthenticateUser>(json);
             return PrepareResponse(_userService.AuthenticateUser(request));
         }
-
     }
 }
