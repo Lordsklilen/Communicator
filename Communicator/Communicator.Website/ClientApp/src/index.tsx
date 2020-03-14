@@ -24,7 +24,7 @@ ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <Layout>
-                <Route exact path='/' component={LoginComponent} />
+                <Route exact path='/index' component={LoginComponent} />
                 <Route path='/register' component={RegisterComponent} />
                 <Route path='/messages' component={MessagesComponent} />
             </Layout>
