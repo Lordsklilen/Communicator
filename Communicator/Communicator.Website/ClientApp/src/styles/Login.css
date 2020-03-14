@@ -1,0 +1,11 @@
+﻿.container {
+
+    margin: 0px auto;
+}
+.LoginForm {
+    max-width: 480px;
+    margin: 0px auto;
+}
+.errorField {
+    color: red;
+}
