@@ -1,4 +1,6 @@
 using Communicator.DataProvider;
+using Communicator.DataProvider.Identity;
+using Communicator.DataProvider.Repositories;
 using Communicator.Service.PublicInterfaces;
 using Communicator.Service.Services;
 using Microsoft.AspNetCore.Builder;
@@ -74,6 +76,8 @@ namespace Communicator.Website
         public void RegisterDependencies(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<RoleRepository>();
+            services.AddTransient<RoleManager<ApplicationRole>>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

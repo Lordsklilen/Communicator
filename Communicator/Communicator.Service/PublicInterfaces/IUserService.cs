@@ -1,4 +1,5 @@
 ﻿using Communicator.Service.DTO;
+using System.Threading.Tasks;
 
 namespace Communicator.Service.PublicInterfaces
 {
@@ -6,5 +7,6 @@ namespace Communicator.Service.PublicInterfaces
     {
         ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request);
         ResponseCreateUser CreateUser(RequestCreateUser request);
+        Task<ResponseBase> CreateRole(string roleName);
     }
 }

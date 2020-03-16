@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Communicator.DataProvider
+namespace Communicator.DataProvider.Identity
 {
     public class ApplicationUser : IdentityUser
     {

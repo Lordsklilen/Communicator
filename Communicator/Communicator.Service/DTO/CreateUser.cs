@@ -6,9 +6,7 @@
         public string password;
     }
 
-    public class ResponseCreateUser
+    public class ResponseCreateUser : ResponseBase
     {
-        public string message;
-        public ResponseStatus status;
     }
 }

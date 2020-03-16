@@ -2,6 +2,8 @@
 using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Threading.Tasks;
+
 namespace Communicator.Website.Controllers
 {
 
@@ -31,5 +33,13 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestCreateUser>(json);
             return PrepareResponse(_userService.CreateUser(request));
         }
+
+        [HttpPost]
+        [Route("Api/CreateRole")]
+        public async Task<string> CreateRole(string roleName)
+        {
+            return PrepareResponse(await _userService.CreateRole(roleName));
+        }
+
     }
 }
