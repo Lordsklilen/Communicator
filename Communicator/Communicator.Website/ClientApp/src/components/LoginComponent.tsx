@@ -18,24 +18,10 @@ type LoginProps =
 class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     state: Readonly<LoginState> = {
-        email: this.props.email,
+        userName: this.props.userName,
         password: this.props.password,
         redirect: this.props.redirect
     };
-
-    handleOnChangeEmail(event: React.FormEvent<HTMLInputElement>) {
-        console.log(event.currentTarget.value);
-        this.setState({
-            email: event.currentTarget.value
-        } as LoginState);
-    }
-
-    handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
-        console.log(event.currentTarget.value);
-        this.setState({
-            password: event.currentTarget.value
-        } as LoginState);
-    }
 
     renderRedirect() {
         if (this.props.redirect) {
@@ -45,7 +31,9 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     authenticate(event: React.FormEvent<HTMLInputElement>) {
         console.log("authenticate request");
-        this.props.RequestAuthenticate(this.state.email, this.state.password);
+        var userNameLogin = (document.getElementById("userNameLogin") as HTMLInputElement).value;
+        var loginPassword = (document.getElementById("loginPassword") as HTMLInputElement).value;
+        this.props.RequestAuthenticate(userNameLogin, loginPassword);
     }
 
     public render() {
@@ -57,17 +45,17 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                     <div className="Login">
                         <form>
                             <FormGroup>
-                                <Label>Email</Label>
+                                <Label>User name</Label>
                                 <Input
                                     autoFocus
-                                    type="email"
-                                    onChange={this.handleOnChangeEmail.bind(this)}
+                                    type="text"
+                                    id="userNameLogin"
                                 />
                             </FormGroup>
                             <FormGroup>
                                 <Label>Password</Label>
                                 <Input
-                                    onChange={this.handleOnChangePassword.bind(this)}
+                                    id="loginPassword"
                                     type="password" />
                             </FormGroup>
                             <Button onClick={this.authenticate.bind(this)} block>

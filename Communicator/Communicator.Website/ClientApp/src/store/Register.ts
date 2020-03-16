@@ -25,12 +25,13 @@ export type KnownAction = RequestCreateUserAction | ResponseCreateUserAction;
 
 // ACTION CREATORS
 export const actionCreators = {
-    RequestCreateUser: (email: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    RequestCreateUser: (userName: string,email: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                userName: userName,
                 email: email,
                 password: password
             })

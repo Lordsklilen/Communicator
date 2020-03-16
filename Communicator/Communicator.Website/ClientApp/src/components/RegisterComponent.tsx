@@ -30,7 +30,8 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
         if (errorMsg === "") {
             var email = (document.getElementById("registerEmail") as HTMLInputElement).value;
             var password = (document.getElementById("registerPasswordInput") as HTMLInputElement).value;
-            this.props.RequestCreateUser(email, password);
+            var userName = (document.getElementById("registerUserName") as HTMLInputElement).value;
+            this.props.RequestCreateUser(userName,email, password);
             console.log("user created");
 
         }
@@ -73,7 +74,16 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                     <div className="Register">
                         <form>
                             <FormGroup>
+                                <Label>User name</Label>
+                                <Input
+                                    autoFocus
+                                    id="registerUserName"
+                                    type="text"
+                                />
+                            </FormGroup>
+                            <FormGroup>
 
+                                <Label>Email</Label>
                                 <Input
                                     autoFocus
                                     id="registerEmail"

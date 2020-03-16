@@ -20,18 +20,18 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/Authenticate")]
-        public string Authenticate([FromBody] JsonElement json)
+        public async Task<string> Authenticate([FromBody] JsonElement json)
         {
             var request = ToObject<RequestAuthenticateUser>(json);
-            return PrepareResponse(_userService.AuthenticateUser(request));
+            return PrepareResponse(await _userService.AuthenticateUser(request));
         }
 
         [HttpPost]
         [Route("Api/CreateUser")]
-        public string CreateUser([FromBody] JsonElement json)
+        public async Task<string> CreateUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestCreateUser>(json);
-            return PrepareResponse(_userService.CreateUser(request));
+            return PrepareResponse(await _userService.CreateUser(request));
         }
 
         [HttpPost]

@@ -77,6 +77,8 @@ namespace Communicator.Website
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<RoleRepository>();
+            services.AddTransient<UserRepository>();
+            services.AddTransient<UserManager<ApplicationUser>>();
             services.AddTransient<RoleManager<ApplicationRole>>();
 
             services.AddDbContext<ApplicationDbContext>(options =>

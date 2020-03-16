@@ -2,7 +2,7 @@
 {
     public class RequestAuthenticateUser
     {
-        public string email;
+        public string userName;
         public string password;
     }
 

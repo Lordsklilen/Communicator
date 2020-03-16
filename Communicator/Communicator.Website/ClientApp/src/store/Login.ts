@@ -4,7 +4,7 @@ import { Status } from './Models/Status';
 
 // STATE
 export interface LoginState {
-    email: string;
+    userName: string;
     password: string;
     redirect: boolean;
 }
@@ -12,7 +12,7 @@ export interface LoginState {
 // ACTIONS
 export interface RequestAuthenticateAction {
     type: 'RequestAuthenticate_action',
-    email: string
+    userName: string
     password: string
 }
 
@@ -27,13 +27,13 @@ export type KnownAction = RequestAuthenticateAction | ResponseAuthenticateAction
 
 // ACTION CREATORS
 export const actionCreators = {
-    RequestAuthenticate: (email: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    RequestAuthenticate: (userName: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: email,
+                userName: userName,
                 password: password
             })
         };
@@ -53,7 +53,7 @@ export const actionCreators = {
 export const reducer: Reducer<LoginState> = (state: LoginState | undefined, incomingAction: Action): LoginState => {
     if (state === undefined) {
         return {
-            email: "",
+            userName: "",
             password: "",
             redirect: false
         };
@@ -64,7 +64,7 @@ export const reducer: Reducer<LoginState> = (state: LoginState | undefined, inco
         case 'ResponseAuthenticate_action':
             console.log("response recived, with message: " + action.message + ", with status: " + action.status)
             return {
-                email: state.email,
+                userName: state.userName,
                 password: state.password,
                 redirect: true
             };

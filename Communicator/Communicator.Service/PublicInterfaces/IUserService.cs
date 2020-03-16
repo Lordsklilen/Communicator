@@ -5,8 +5,8 @@ namespace Communicator.Service.PublicInterfaces
 {
     public interface IUserService
     {
-        ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request);
-        ResponseCreateUser CreateUser(RequestCreateUser request);
+        Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request);
+        Task<ResponseCreateUser> CreateUser(RequestCreateUser request);
         Task<ResponseBase> CreateRole(string roleName);
     }
 }

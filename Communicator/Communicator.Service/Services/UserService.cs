@@ -9,31 +9,44 @@ namespace Communicator.Service.Services
     public class UserService : IUserService
     {
         private readonly RoleRepository _roleRepository;
+        private readonly UserRepository _userRepository;
 
-        public UserService(RoleRepository roleRepository)
+        public UserService(RoleRepository roleRepository, UserRepository userRepository)
         {
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
 
-        public ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request)
+        public async Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request)
         {
-            var response = new ResponseAuthenticateUser()
+
+            try
             {
-                message = $"Authentication for {request.email} has been succesfull",
-                status = ResponseStatus.Success
-            };
-            return response;
+                var result = await _userRepository.AuthenticateUser(request.userName, request.password);
+                if (result)
+                {
+                    return new ResponseAuthenticateUser()
+                    {
+                        message = $"User {request.userName} is authenticated.",
+                        status = ResponseStatus.Success
+                    };
+                }
+                return new ResponseAuthenticateUser()
+                {
+                    message = $"User {request.userName} cannot be authenticated.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseAuthenticateUser()
+                {
+                    message = $"User {request.userName} cannot be authenticated. Message: {ex.Message}, Call stack:{ex.StackTrace}",
+                    status = ResponseStatus.Error
+                };
+            }
         }
 
-        public ResponseCreateUser CreateUser(RequestCreateUser request)
-        {
-            var response = new ResponseCreateUser()
-            {
-                message = $"Authentication for {request.email} has been succesfull",
-                status = ResponseStatus.Success
-            };
-            return response;
-        }
 
         //ROLES
         public async Task<ResponseBase> CreateRole(string roleName)
@@ -65,5 +78,37 @@ namespace Communicator.Service.Services
                 };
             }
         }
+        //USERS
+        public async Task<ResponseCreateUser> CreateUser(RequestCreateUser r)
+        {
+            try
+            {
+                await _roleRepository.CreateDefaultRoles();
+
+                var created = await _userRepository.CreateUser(r.userName, r.email, r.password);
+                if (created.Succeeded)
+                {
+                    return new ResponseCreateUser()
+                    {
+                        message = $"User {r.userName} been created succesfully",
+                        status = ResponseStatus.Success
+                    };
+                }
+                return new ResponseCreateUser()
+                {
+                    message = $"User {r.userName} cannot be created due to unknown problem.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseCreateUser()
+                {
+                    message = $"User {r.userName} cannot be created. Message: {ex.Message}, Call stack:{ex.StackTrace}",
+                    status = ResponseStatus.Error
+                };
+            }
+        }
+
     }
 }

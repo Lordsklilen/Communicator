@@ -31,6 +31,18 @@ namespace Communicator.DataProvider.Repositories
             });
             return response;
         }
+        public async Task CreateDefaultRoles()
+        {
+            try
+            {
+                var existRole = await _roleManager.FindByNameAsync(ApplicationRole.stadardRole);
+                if (existRole == null)
+                {
+                    await CreateRole(ApplicationRole.stadardRole);
+                }
+            }
+            catch (Exception) { }
+        }
 
         public async Task<ApplicationRole> GetRoleByName(string roleName)
         {
