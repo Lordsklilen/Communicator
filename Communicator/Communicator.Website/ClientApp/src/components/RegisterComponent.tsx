@@ -40,7 +40,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
 
     renderRedirect(){
         if (this.props.redirect) {
-            return <Redirect to='/messages' />
+            this.props.history.push('/messages');
         }
     }
 
@@ -56,7 +56,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
         var password = (document.getElementById("registerPasswordInput") as HTMLInputElement).value;
         var checkpassword = (document.getElementById("registerCheckPasswordInput") as HTMLInputElement).value;
 
-        if (email.length == 0) {
+        if (email.length === 0) {
             return "Email cannot be empty"
         }
         else if (password !== checkpassword) {
@@ -105,6 +105,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                                     onChange={this.handleOnChangePassword.bind(this)} />
                             </FormGroup>
                             <Label className="errorField">{this.state.errorMessage}</Label>
+                            <Label className="errorField">{this.props.errorMessage}</Label>
                             <Button onClick={this.createUser.bind(this)} block>
                                 Register
                         </Button>

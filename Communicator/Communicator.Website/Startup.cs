@@ -28,7 +28,12 @@ namespace Communicator.Website
         {
             RegisterDependencies(services);
             services.AddControllersWithViews();
-
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/";
+                options.AccessDeniedPath = "/AccessDenied";
+                options.SlidingExpiration = true;
+            });
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
@@ -52,9 +57,8 @@ namespace Communicator.Website
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseSpaStaticFiles();
-
             app.UseRouting();
-
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -79,6 +83,7 @@ namespace Communicator.Website
             services.AddTransient<RoleRepository>();
             services.AddTransient<UserRepository>();
             services.AddTransient<UserManager<ApplicationUser>>();
+            services.AddTransient<SignInManager<ApplicationUser>>();
             services.AddTransient<RoleManager<ApplicationRole>>();
 
             services.AddDbContext<ApplicationDbContext>(options =>

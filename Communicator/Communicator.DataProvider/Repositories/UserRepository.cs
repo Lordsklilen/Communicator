@@ -1,7 +1,6 @@
 ﻿using Communicator.DataProvider.Identity;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Communicator.DataProvider.Repositories
@@ -9,9 +8,12 @@ namespace Communicator.DataProvider.Repositories
     public class UserRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public UserRepository(UserManager<ApplicationUser> userManager)
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
+        public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IdentityResult> CreateUser(string userName, string email, string password)
@@ -26,50 +28,36 @@ namespace Communicator.DataProvider.Repositories
             {
                 Id = userName,
                 Email = email,
-                UserName = userName,
-                PasswordHash = HashPassword(password)
+                UserName = userName
             };
+            user.PasswordHash = hasher.HashPassword(user, password);
             var response = await _userManager.CreateAsync(user);
             await _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole);
 
+            var res = await SignInUser(userName, password);
             return response;
         }
-        public async Task<bool> AuthenticateUser(string userName, string password)
+        public async Task<bool> SignInUser(string userName, string password)
         {
-            var existRole = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
 
-            if (existRole == null)
+            if (user == null)
             {
                 throw new Exception("User does not exist.");
             }
-            return await VerifyUser(userName, password);
+
+            if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Failed)
+            {
+                var result = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+                return result.Succeeded;
+            }
+            return false;
         }
 
-
-        private string HashPassword(string password)
+        public async Task SignOutAsync()
         {
-            byte[] salt;
-            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            byte[] hashBytes = new byte[36];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
-            return Convert.ToBase64String(hashBytes);
+            await _signInManager.SignOutAsync();
         }
 
-        private async Task<bool> VerifyUser(string userName, string password)
-        {
-            var savedPasswordHash = (await _userManager.FindByNameAsync(userName)).PasswordHash;
-            byte[] hashBytes = Convert.FromBase64String(savedPasswordHash);
-            byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            for (int i = 0; i < 20; i++)
-                if (hashBytes[i + 16] != hash[i])
-                    throw new UnauthorizedAccessException();
-            return true;
-        }
     }
 }

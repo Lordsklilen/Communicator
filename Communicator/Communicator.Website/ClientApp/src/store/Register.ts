@@ -60,12 +60,16 @@ export const reducer: Reducer<RegisterState> = (state: RegisterState | undefined
     switch (action.type) {
         case 'ResponseCreateUserAction_action':
             console.log("response recived,User Registered with message: " + action.message + ", with status: " + action.status)
-            if (action.status == 0) {
+            if (action.status === 0) {
                 return {
-                    errorMessage: "jakiœ dziwny message",
+                    errorMessage: "",
                     redirect: true
                 };
             }
+            return {
+                errorMessage: action.message,
+                redirect: false
+            };
 
         default:
             return state;

@@ -1,28 +1,21 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './index';
 import { Status } from './Models/Status';
-import { withRouter } from 'react-router-dom';
+
 // STATE
-export interface LoginState {
-    errorMessage:string
-    redirect: boolean;
+export interface LayoutState {
+    userName: string;
+    isOpen: boolean;
 }
 
 // ACTIONS
-export interface RequestAuthenticateAction {
-    type: 'RequestAuthenticate_action',
-    userName: string
-    password: string
-}
-
-export interface ResponseAuthenticateAction {
+export interface ResponseIsAuthenticatedAction {
     type: 'ResponseAuthenticate_action',
     message: string,
     status: Status
-
 }
 
-export type KnownAction = RequestAuthenticateAction | ResponseAuthenticateAction;
+export type KnownAction = ResponseIsAuthenticatedAction;
 
 // ACTION CREATORS
 export const actionCreators = {
@@ -32,12 +25,11 @@ export const actionCreators = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userName: userName,
-                password: password
+                userName: userName
             })
         };
         fetch('/User/Api/Authenticate', requestOptions)
-            .then(response => response.json() as Promise<ResponseAuthenticateAction>)
+            .then(response => response.json() as Promise<ResponseIsAuthenticatedAction>)
             .then(data => {
                 dispatch({
                     type: 'ResponseAuthenticate_action',
@@ -49,11 +41,11 @@ export const actionCreators = {
 };
 
 // REDUCER
-export const reducer: Reducer<LoginState> = (state: LoginState | undefined, incomingAction: Action): LoginState => {
+export const reducer: Reducer<LayoutState> = (state: LayoutState | undefined, incomingAction: Action): LayoutState => {
     if (state === undefined) {
         return {
-            errorMessage:"",
-            redirect: false
+            userName: "",
+            isOpen: false
         };
     }
 
@@ -61,15 +53,9 @@ export const reducer: Reducer<LoginState> = (state: LoginState | undefined, inco
     switch (action.type) {
         case 'ResponseAuthenticate_action':
             console.log("response recived, with message: " + action.message + ", with status: " + action.status)
-            if (action.status === Status.Success) {
-                return {
-                    errorMessage: "",
-                    redirect: true
-                };
-            }
             return {
-                errorMessage: action.message,
-                redirect: false
+                userName: state.userName,
+                isOpen: false
             };
         default:
             return state;

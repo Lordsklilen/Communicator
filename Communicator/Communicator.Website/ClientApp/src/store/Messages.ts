@@ -3,16 +3,10 @@ import { Status } from './Models/Status';
 
 // STATE
 export interface MessagesState {
-    email: string;
-    password: string;
+    UserName: string;
 }
 
 // ACTIONS
-export interface RequestFriendsListAction {
-    type: 'RequestCreateUserAction_action',
-    email: string
-    password: string
-}
 
 export interface ResponseFriendsListAction {
     type: 'ResponseCreateUserAction_action',
@@ -20,7 +14,7 @@ export interface ResponseFriendsListAction {
     status: Status
 }
 
-export type KnownAction = RequestFriendsListAction | ResponseFriendsListAction;
+export type KnownAction = ResponseFriendsListAction;
 
 // ACTION CREATORS
 export const actionCreators = {
@@ -31,8 +25,7 @@ export const actionCreators = {
 export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined, incomingAction: Action): MessagesState => {
     if (state === undefined) {
         return {
-            email: "",
-            password: ""
+            UserName: ""
         };
     }
 

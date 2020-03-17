@@ -1,5 +1,6 @@
 ﻿using Communicator.Service.DTO;
 using Communicator.Service.PublicInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -39,6 +40,14 @@ namespace Communicator.Website.Controllers
         public async Task<string> CreateRole(string roleName)
         {
             return PrepareResponse(await _userService.CreateRole(roleName));
+        }
+
+        [HttpGet]
+        [Route("Api/CheckAuthorization")]
+        [Authorize(Roles = "User")]
+        public bool CheckAuthorization()
+        {
+            return true;
         }
 
     }

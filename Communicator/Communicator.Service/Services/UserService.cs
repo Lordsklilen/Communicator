@@ -19,10 +19,9 @@ namespace Communicator.Service.Services
 
         public async Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request)
         {
-
             try
             {
-                var result = await _userRepository.AuthenticateUser(request.userName, request.password);
+                var result = await _userRepository.SignInUser(request.userName, request.password);
                 if (result)
                 {
                     return new ResponseAuthenticateUser()

@@ -18,14 +18,16 @@ type LoginProps =
 class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     state: Readonly<LoginState> = {
-        userName: this.props.userName,
-        password: this.props.password,
+        errorMessage: this.props.errorMessage,
         redirect: this.props.redirect
     };
 
     renderRedirect() {
         if (this.props.redirect) {
-            return <Redirect to='/messages' />
+            this.setState({
+                redirect:false
+            })
+            this.props.history.push('/messages');
         }
     }
 
@@ -58,13 +60,14 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                                     id="loginPassword"
                                     type="password" />
                             </FormGroup>
+                            <Label className="errorField">{this.state.errorMessage}</Label>
+                            <Label className="errorField">{this.props.errorMessage}</Label>
                             <Button onClick={this.authenticate.bind(this)} block>
                                 Login
                         </Button>
                         </form>
                     </div>
                 </div>
-
                 {this.renderRedirect()}
             </React.Fragment>
         );

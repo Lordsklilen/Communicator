@@ -13,18 +13,19 @@ import '../styles/Login.css';
 type MessagesProps =
     MessagesState &
     typeof MessagesStore.actionCreators &
-    RouteComponentProps<{ email: string }>;
+    RouteComponentProps<{ UserName: string }>;
 
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
-        email: this.props.email,
-        password: this.props.password
+        UserName: this.props.UserName
     };
 
     public render() {
         return (
             <React.Fragment>
+                //Taskbar
+
                 <div className="Messages">
                     Here are message protected tab
                 </div>

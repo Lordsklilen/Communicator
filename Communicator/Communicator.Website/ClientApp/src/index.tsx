@@ -9,7 +9,7 @@ import { Route } from 'react-router';
 import Layout from './components/Layout';
 import LoginComponent from './components/LoginComponent';
 import RegisterComponent from './components/RegisterComponent';
-import MessagesComponent from './components/MessagesComponent';
+import MessagesLayout from './components/MessagesLayout';
 
 import registerServiceWorker from './Configuration/registerServiceWorker';
 
@@ -23,10 +23,10 @@ const store = configureStore(history);
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
+            <Route exact path='/messages' component={MessagesLayout} />
             <Layout>
                 <Route exact path='/' component={LoginComponent} />
                 <Route exact path='/register' component={RegisterComponent} />
-                <Route exact path='/messages' component={MessagesComponent} />
             </Layout>
         </ConnectedRouter>
     </Provider>,
