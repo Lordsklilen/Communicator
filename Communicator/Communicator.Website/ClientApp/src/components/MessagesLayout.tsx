@@ -19,7 +19,8 @@ type LayoutProps =
 class MessagesLayout extends React.PureComponent<LayoutProps, LayoutState> {
     state = {
         userName: this.props.userName,
-        isOpen: this.props.isOpen
+        isOpen: this.props.isOpen,
+        isSignedIn: this.props.isSignedIn
     };
 
     public render() {
@@ -30,11 +31,25 @@ class MessagesLayout extends React.PureComponent<LayoutProps, LayoutState> {
                         <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
                         <NavbarToggler onClick={this.toggle} className="mr-2" />
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
-                            <ul className="navbar-nav flex-grow">
-                                <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/">Hello {this.state.userName} Log out</NavLink>
-                                </NavItem>
-                            </ul>
+                            {this.props.isSignedIn &&
+                                <ul className="navbar-nav flex-grow">
+                                    Hello {this.state.userName}
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/">Log out</NavLink>
+                                    </NavItem>
+                                </ul>
+                            }
+
+                            {!this.props.isSignedIn &&
+                                <ul className="navbar-nav flex-grow">
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/">Log in</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
+                                    </NavItem>
+                                </ul>
+                            }
                         </Collapse>
                     </Container>
                 </Navbar>

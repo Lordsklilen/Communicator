@@ -6,6 +6,7 @@ import { Status } from './Models/Status';
 export interface LayoutState {
     userName: string;
     isOpen: boolean;
+    isSignedIn: boolean;
 }
 
 // ACTIONS
@@ -45,7 +46,8 @@ export const reducer: Reducer<LayoutState> = (state: LayoutState | undefined, in
     if (state === undefined) {
         return {
             userName: "",
-            isOpen: false
+            isOpen: false,
+            isSignedIn: false
         };
     }
 
@@ -55,7 +57,8 @@ export const reducer: Reducer<LayoutState> = (state: LayoutState | undefined, in
             console.log("response recived, with message: " + action.message + ", with status: " + action.status)
             return {
                 userName: state.userName,
-                isOpen: false
+                isOpen: false,
+                isSignedIn: false
             };
         default:
             return state;
