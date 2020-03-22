@@ -1,6 +1,7 @@
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './index';
 import { Status } from './Models/Status';
+import * as configureStore from '../Configuration/configureStore';
 
 // STATE
 export interface LayoutState {
@@ -20,7 +21,7 @@ export type KnownAction = ResponseIsAuthenticatedAction;
 
 // ACTION CREATORS
 export const actionCreators = {
-    RequestAuthenticate: (userName: string, password:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    RequestAuthenticate: (userName: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
 
         const requestOptions = {
             method: 'POST',

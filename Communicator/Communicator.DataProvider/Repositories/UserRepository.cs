@@ -16,7 +16,9 @@ namespace Communicator.DataProvider.Repositories
             _signInManager = signInManager;
         }
 
-        public async Task<IdentityResult> CreateUser(string userName, string email, string password)
+
+        //Users
+        public async Task<bool> CreateUser(string userName, string email, string password)
         {
             var existRole = await _userManager.FindByNameAsync(userName);
 
@@ -31,15 +33,22 @@ namespace Communicator.DataProvider.Repositories
                 UserName = userName
             };
             user.PasswordHash = hasher.HashPassword(user, password);
-            var response = await _userManager.CreateAsync(user);
+            await _userManager.CreateAsync(user);
             await _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole);
 
-            var res = await SignInUser(userName, password);
-            return response;
+            var res = await SignInUser(user, password);
+            return res;
         }
-        public async Task<bool> SignInUser(string userName, string password)
+
+        public async Task<ApplicationUser> GetUser(string userName)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            return await _userManager.FindByNameAsync(userName);
+        }
+
+
+        // SignIn/Out
+        public async Task<bool> SignInUser(ApplicationUser user, string password)
+        {
 
             if (user == null)
             {
@@ -48,7 +57,7 @@ namespace Communicator.DataProvider.Repositories
 
             if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Failed)
             {
-                var result = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
                 return result.Succeeded;
             }
             return false;

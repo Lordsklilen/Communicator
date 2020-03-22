@@ -6,8 +6,10 @@ import { RouteComponentProps, Redirect } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 
-//Styles
+import { CookiesManager } from '../Managers/CookiesManager'
 import '../styles/Login.css';
+import { Status } from '../store/Models/Status';
+import { ApplicationUser } from '../store/Models/ApplicationUser';
 
 
 type LoginProps =
@@ -15,27 +17,24 @@ type LoginProps =
     typeof LoginStore.actionCreators &
     RouteComponentProps<{ email: string }>;
 
+export interface ResponseAuthenticate {
+    message: string,
+    status: Status,
+    User: ApplicationUser
+
+}
 class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     state: Readonly<LoginState> = {
-        errorMessage: this.props.errorMessage,
-        redirect: this.props.redirect
+        errorMessage: "",
+        userName: ""
     };
-
-    renderRedirect() {
-        if (this.props.redirect) {
-            this.setState({
-                redirect:false
-            })
-            this.props.history.push('/messages');
-        }
-    }
 
     authenticate(event: React.FormEvent<HTMLInputElement>) {
         console.log("authenticate request");
         var userNameLogin = (document.getElementById("userNameLogin") as HTMLInputElement).value;
         var loginPassword = (document.getElementById("loginPassword") as HTMLInputElement).value;
-        this.props.RequestAuthenticate(userNameLogin, loginPassword);
+        this.RequestAuthenticate(userNameLogin, loginPassword);
     }
 
     public render() {
@@ -68,9 +67,36 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                         </form>
                     </div>
                 </div>
-                {this.renderRedirect()}
             </React.Fragment>
         );
+    }
+
+    //Actions
+    RequestAuthenticate(userName: string, password: string) {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userName: userName,
+                password: password
+            })
+        };
+        fetch('/User/Api/Authenticate', requestOptions)
+            .then(response => response.json() as Promise<ResponseAuthenticate>)
+            .then(data => {
+                console.log("Response recived, with message: " + data.message + ", with status: " + data.status)
+                if (data.status === Status.Success) {
+                    CookiesManager.FillUserName(data.User.UserName);
+                    this.props.history.push('/messages');
+                    window.location.reload();
+                }
+                else {
+                    this.setState({
+                        errorMessage: data.message
+                    })
+                }
+            });
     }
 }
 

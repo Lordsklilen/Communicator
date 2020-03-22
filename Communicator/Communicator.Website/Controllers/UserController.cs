@@ -42,12 +42,30 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(await _userService.CreateRole(roleName));
         }
 
+        //Authorized Methods
         [HttpGet]
         [Route("Api/CheckAuthorization")]
         [Authorize(Roles = "User")]
         public bool CheckAuthorization()
         {
             return true;
+        }
+
+        [HttpPost]
+        [Route("Api/GetUser")]
+        [Authorize(Roles = "User")]
+        public async Task<string> GetUser([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestGetUser>(json);
+            return PrepareResponse(await _userService.GetUser(request));
+        }
+
+        [HttpPost]
+        [Route("Api/SignOut")]
+        [Authorize(Roles = "User")]
+        public async Task<string> SignOut([FromBody] JsonElement json)
+        {
+            return PrepareResponse(await _userService.SignOut());
         }
 
     }

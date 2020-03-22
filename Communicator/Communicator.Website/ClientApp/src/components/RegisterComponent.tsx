@@ -5,9 +5,10 @@ import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 import * as RegisterStore from '../store/Register';
 import { RegisterState } from '../store/Register';
-
-//Styles
 import '../styles/Login.css';
+import { Status } from '../store/Models/Status';
+import { CookiesManager } from '../Managers/CookiesManager';
+import { ApplicationUser } from '../store/Models/ApplicationUser';
 
 
 type RegisterProps =
@@ -15,11 +16,16 @@ type RegisterProps =
     typeof RegisterStore.actionCreators &
     RouteComponentProps<{ email: string }>;
 
+export interface ResponseCreateUser {
+    message: string,
+    status: Status
+    User: ApplicationUser
+}
+
 class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
 
     state: Readonly<RegisterState> = {
-        errorMessage: this.props.errorMessage,
-        redirect: this.props.redirect
+        errorMessage: "",
     };
 
     createUser(event: React.FormEvent<HTMLInputElement>) {
@@ -31,17 +37,11 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
             var email = (document.getElementById("registerEmail") as HTMLInputElement).value;
             var password = (document.getElementById("registerPasswordInput") as HTMLInputElement).value;
             var userName = (document.getElementById("registerUserName") as HTMLInputElement).value;
-            this.props.RequestCreateUser(userName,email, password);
+            this.RequestCreateUser(userName, email, password);
             console.log("user created");
 
         }
 
-    }
-
-    renderRedirect(){
-        if (this.props.redirect) {
-            this.props.history.push('/messages');
-        }
     }
 
     handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
@@ -112,9 +112,37 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                         </form>
                     </div>
                 </div>
-                {this.renderRedirect()}
             </React.Fragment>
         );
+    }
+
+    //Actions
+    RequestCreateUser(userName: string, email: string, password: string) {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userName: userName,
+                email: email,
+                password: password
+            })
+        };
+        fetch('/User/Api/CreateUser', requestOptions)
+            .then(response => response.json() as Promise<ResponseCreateUser>)
+            .then(data => {
+                console.log("Response recived, with message: " + data.message + ", with status: " + data.status)
+                if (data.status === Status.Success) {
+                    CookiesManager.FillUserName(data.User.UserName);
+                    this.props.history.push('/messages');
+                    window.location.reload();
+                }
+                else {
+                    this.setState({
+                        errorMessage: data.message
+                    })
+                }
+            });
     }
 }
 

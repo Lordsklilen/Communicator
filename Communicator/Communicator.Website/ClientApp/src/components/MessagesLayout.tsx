@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, Label } from 'reactstrap';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import '../styles/NavMenu.css';
 import * as LayoutStore from '../store/Layout';
@@ -7,6 +7,7 @@ import { LayoutState } from '../store/Layout';
 import { connect } from 'react-redux';
 import '../styles/Login.css';
 import { ApplicationState } from '../store/index';
+import { CookiesManager } from '../Managers/CookiesManager';
 
 
 
@@ -16,12 +17,55 @@ type LayoutProps =
     RouteComponentProps<{ UserName: string }>;
 
 
-class MessagesLayout extends React.PureComponent<LayoutProps, LayoutState> {
+class MessagesLayout extends React.Component<LayoutProps, LayoutState> {
+
+    constructor(props: LayoutProps) {
+        super(props);
+        //authenticate
+
+        //...this.props.
+    }
+
     state = {
         userName: this.props.userName,
-        isOpen: this.props.isOpen,
+        isOpen: false,
         isSignedIn: this.props.isSignedIn
     };
+
+    componentDidMount() {
+        let username = CookiesManager.GetUserName();
+        this.setState({ userName: username })
+        console.log("component Mounted, fetching data for user" + username)
+    }
+
+    LogOut(event: React.FormEvent<HTMLInputElement>) {
+
+
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+            })
+        };
+        fetch('/User/Api/SignOut', requestOptions)
+            .then(response => response.json() as Promise<boolean>)
+            .then(data => {
+                console.log("Response recived")
+                this.setState({ userName: "" });
+                CookiesManager.FillUserName("");
+                this.props.history.push('/');
+            });
+
+    }
+    navLinkSwitch() {
+        if (this.state.userName !== undefined && this.state.userName !== "" && this.state.userName.length > 0) {
+            return true;
+        }
+        else {
+            return false
+        }
+    }
 
     public render() {
         return (
@@ -31,16 +75,18 @@ class MessagesLayout extends React.PureComponent<LayoutProps, LayoutState> {
                         <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
                         <NavbarToggler onClick={this.toggle} className="mr-2" />
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
-                            {this.props.isSignedIn &&
+                            {this.navLinkSwitch() &&
                                 <ul className="navbar-nav flex-grow">
-                                    Hello {this.state.userName}
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/">Log out</NavLink>
+                                        <NavLink className="text-dark" id="UserName">Hello {this.state.userName}</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)}>Log out</NavLink>
                                     </NavItem>
                                 </ul>
                             }
 
-                            {!this.props.isSignedIn &&
+                            {!this.navLinkSwitch() &&
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/">Log in</NavLink>

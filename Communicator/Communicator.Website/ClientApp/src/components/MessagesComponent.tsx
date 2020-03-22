@@ -8,6 +8,7 @@ import { MessagesState } from '../store/Messages';
 
 //Styles
 import '../styles/Login.css';
+import { CookiesManager } from '../Managers/CookiesManager';
 
 
 type MessagesProps =
@@ -17,10 +18,22 @@ type MessagesProps =
 
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
+    constructor(props: MessagesProps) {
+        super(props);
+
+    }
     state: Readonly<MessagesState> = {
-        UserName: this.props.UserName
+        UserName: "",
+        IsSignedIn: false,
+        User: null,
     };
 
+    componentDidMount() {
+        let username = CookiesManager.GetUserName();
+        this.setState({ UserName: username })
+        console.log("component Mounted, fetching data for user" + username)
+        //this.props.GetUser(username);
+    }
     public render() {
         return (
             <React.Fragment>

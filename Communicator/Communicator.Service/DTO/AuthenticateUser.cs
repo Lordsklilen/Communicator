@@ -1,4 +1,6 @@
-﻿namespace Communicator.Service.DTO
+﻿using Communicator.DataProvider.Identity;
+
+namespace Communicator.Service.DTO
 {
     public class RequestAuthenticateUser
     {
@@ -8,5 +10,7 @@
 
     public class ResponseAuthenticateUser : ResponseBase
     {
+        public ApplicationUser User;
+        public bool IsSignedIn;
     }
 }

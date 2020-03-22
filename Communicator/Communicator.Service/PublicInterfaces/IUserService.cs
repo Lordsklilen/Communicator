@@ -8,5 +8,7 @@ namespace Communicator.Service.PublicInterfaces
         Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request);
         Task<ResponseCreateUser> CreateUser(RequestCreateUser request);
         Task<ResponseBase> CreateRole(string roleName);
+        Task<ResponseGetUser> GetUser(RequestGetUser request);
+        Task<bool> SignOut();
     }
 }
