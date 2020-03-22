@@ -1,38 +1,40 @@
 import { Action, Reducer } from 'redux';
 import { Status } from './Models/Status';
-
+import { ApplicationUser } from './Models/ApplicationUser';
 // STATE
 export interface MessagesState {
-    email: string;
-    password: string;
+    UserName: string;
+    IsSignedIn: boolean;
+    User: ApplicationUser | null;
+    isOpen:boolean
 }
 
 // ACTIONS
-export interface RequestFriendsListAction {
-    type: 'RequestCreateUserAction_action',
-    email: string
-    password: string
-}
-
 export interface ResponseFriendsListAction {
     type: 'ResponseCreateUserAction_action',
     message: string,
     status: Status
 }
+export interface ResponseGetUser {
+    type: 'ResponseAuthenticate_action',
+    message: string,
+    status: Status
+    User: ApplicationUser | null
+}
 
-export type KnownAction = RequestFriendsListAction | ResponseFriendsListAction;
+export type KnownAction = ResponseFriendsListAction | ResponseGetUser;
 
 // ACTION CREATORS
-export const actionCreators = {
-
-};
+export const actionCreators = {};
 
 // REDUCER
 export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined, incomingAction: Action): MessagesState => {
     if (state === undefined) {
         return {
-            email: "",
-            password: ""
+            UserName: "",
+            IsSignedIn: false,
+            User:null,
+            isOpen: false
         };
     }
 

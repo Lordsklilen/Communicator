@@ -6,7 +6,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import configureStore from './Configuration/configureStore';
 import { Route } from 'react-router';
-import Layout from './components/Layout';
 import LoginComponent from './components/LoginComponent';
 import RegisterComponent from './components/RegisterComponent';
 import MessagesComponent from './components/MessagesComponent';
@@ -23,11 +22,9 @@ const store = configureStore(history);
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            <Layout>
                 <Route exact path='/' component={LoginComponent} />
-                <Route path='/register' component={RegisterComponent} />
-                <Route path='/messages' component={MessagesComponent} />
-            </Layout>
+                <Route exact path='/register' component={RegisterComponent} />
+                <Route exact path='/messages' component={MessagesComponent} />
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'));

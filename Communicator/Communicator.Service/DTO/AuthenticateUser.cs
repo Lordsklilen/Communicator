@@ -1,14 +1,16 @@
-﻿namespace Communicator.Service.DTO
+﻿using Communicator.DataProvider.Identity;
+
+namespace Communicator.Service.DTO
 {
     public class RequestAuthenticateUser
     {
-        public string email;
+        public string userName;
         public string password;
     }
 
-    public class ResponseAuthenticateUser
+    public class ResponseAuthenticateUser : ResponseBase
     {
-        public string message;
-        public ResponseStatus status;
+        public ApplicationUser User;
+        public bool IsSignedIn;
     }
 }
