@@ -10,6 +10,8 @@ namespace Communicator.DataProvider
         {
             var IsAlive = CheckAlive();
         }
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public bool CheckAlive()
         {
