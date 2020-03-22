@@ -6,7 +6,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import configureStore from './Configuration/configureStore';
 import { Route } from 'react-router';
-import MessagesLayout from './components/MessagesLayout';
 import LoginComponent from './components/LoginComponent';
 import RegisterComponent from './components/RegisterComponent';
 import MessagesComponent from './components/MessagesComponent';
@@ -23,7 +22,6 @@ const store = configureStore(history);
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-                <Route path='/' component={MessagesLayout} />
                 <Route exact path='/' component={LoginComponent} />
                 <Route exact path='/register' component={RegisterComponent} />
                 <Route exact path='/messages' component={MessagesComponent} />

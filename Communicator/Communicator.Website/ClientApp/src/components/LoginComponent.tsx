@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { Label, FormGroup, Input, Button } from 'reactstrap';
+import { Label, FormGroup, Input,  NavbarToggler, NavbarBrand, Container, Navbar, NavItem, Collapse, NavLink } from 'reactstrap';
 import * as LoginStore from '../store/Login';
 import { LoginState } from '../store/Login';
 import { RouteComponentProps, Redirect } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
-
 import { CookiesManager } from '../Managers/CookiesManager'
 import '../styles/Login.css';
 import { Status } from '../store/Models/Status';
 import { ApplicationUser } from '../store/Models/ApplicationUser';
+import { Link } from 'react-router-dom';
 
 
 type LoginProps =
@@ -17,20 +17,16 @@ type LoginProps =
     typeof LoginStore.actionCreators &
     RouteComponentProps<{ email: string }>;
 
-export interface ResponseAuthenticate {
-    message: string,
-    status: Status,
-    User: ApplicationUser
-
-}
 class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     state: Readonly<LoginState> = {
         errorMessage: "",
-        userName: ""
+        userName: "",
+        isOpen: false
     };
 
-    authenticate(event: React.FormEvent<HTMLInputElement>) {
+    authenticate(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
         console.log("authenticate request");
         var userNameLogin = (document.getElementById("userNameLogin") as HTMLInputElement).value;
         var loginPassword = (document.getElementById("loginPassword") as HTMLInputElement).value;
@@ -40,11 +36,30 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
     public render() {
         return (
             <React.Fragment>
+                <header>
+                    <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
+                        <Container>
+                            <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
+                            <NavbarToggler onClick={this.toggle} className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
+                                <ul className="navbar-nav flex-grow">
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/">Log in</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
+                                    </NavItem>
+                                </ul>
+                            </Collapse>
+                        </Container>
+                    </Navbar>
+                </header>
+
                 <div className="LoginForm">
                     <title title="Communicator" />
                     <h1>Welcome to communicator</h1>
                     <div className="Login">
-                        <form>
+                        <form onSubmit={this.authenticate.bind(this)}>
                             <FormGroup>
                                 <Label>User name</Label>
                                 <Input
@@ -61,9 +76,7 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                             </FormGroup>
                             <Label className="errorField">{this.state.errorMessage}</Label>
                             <Label className="errorField">{this.props.errorMessage}</Label>
-                            <Button onClick={this.authenticate.bind(this)} block>
-                                Login
-                        </Button>
+                            <Input type="submit" block value="Login"/>
                         </form>
                     </div>
                 </div>
@@ -73,7 +86,6 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
 
     //Actions
     RequestAuthenticate(userName: string, password: string) {
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -89,7 +101,6 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                 if (data.status === Status.Success) {
                     CookiesManager.FillUserName(data.User.UserName);
                     this.props.history.push('/messages');
-                    window.location.reload();
                 }
                 else {
                     this.setState({
@@ -98,9 +109,21 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                 }
             });
     }
+    private toggle = () => {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
 }
 
 export default connect(
     (state: ApplicationState) => state.login,
     LoginStore.actionCreators
 )(LoginComponent as any);
+
+
+export interface ResponseAuthenticate {
+    message: string,
+    status: Status,
+    User: ApplicationUser
+}

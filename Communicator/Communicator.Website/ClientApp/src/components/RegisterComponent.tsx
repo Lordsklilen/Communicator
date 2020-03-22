@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Label, FormGroup, Input, Button } from 'reactstrap';
+import { Label, FormGroup, Input, Button, Navbar, Container, NavbarBrand, NavbarToggler, Collapse, NavItem, NavLink } from 'reactstrap';
 import { RouteComponentProps, Redirect } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
@@ -9,6 +9,7 @@ import '../styles/Login.css';
 import { Status } from '../store/Models/Status';
 import { CookiesManager } from '../Managers/CookiesManager';
 import { ApplicationUser } from '../store/Models/ApplicationUser';
+import { Link } from 'react-router-dom';
 
 
 type RegisterProps =
@@ -26,9 +27,11 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
 
     state: Readonly<RegisterState> = {
         errorMessage: "",
+        isOpen:false
     };
 
-    createUser(event: React.FormEvent<HTMLInputElement>) {
+    createUser(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
         var errorMsg = this.validateFields();
         this.setState({
             errorMessage: errorMsg
@@ -68,11 +71,30 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
     public render() {
         return (
             <React.Fragment>
+                <header>
+                    <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
+                        <Container>
+                            <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
+                            <NavbarToggler onClick={this.toggle} className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
+                                <ul className="navbar-nav flex-grow">
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/">Log in</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
+                                    </NavItem>
+                                </ul>
+                            </Collapse>
+                        </Container>
+                    </Navbar>
+                </header>
+
                 <div className="LoginForm">
                     <title title="Communicator" />
                     <h1>Register new user</h1>
                     <div className="Register">
-                        <form>
+                        <form onSubmit={this.createUser.bind(this)} >
                             <FormGroup>
                                 <Label>User name</Label>
                                 <Input
@@ -106,9 +128,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                             </FormGroup>
                             <Label className="errorField">{this.state.errorMessage}</Label>
                             <Label className="errorField">{this.props.errorMessage}</Label>
-                            <Button onClick={this.createUser.bind(this)} block>
-                                Register
-                        </Button>
+                            <Input type="submit" block value="Register"/>
                         </form>
                     </div>
                 </div>
@@ -116,6 +136,11 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
         );
     }
 
+    private toggle = () => {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
     //Actions
     RequestCreateUser(userName: string, email: string, password: string) {
 
@@ -135,7 +160,6 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                 if (data.status === Status.Success) {
                     CookiesManager.FillUserName(data.User.UserName);
                     this.props.history.push('/messages');
-                    window.location.reload();
                 }
                 else {
                     this.setState({
