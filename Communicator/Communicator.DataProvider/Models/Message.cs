@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Communicator.DataProvider.Identity
+namespace Communicator.DataProvider.Models
 {
     public class Message
     {

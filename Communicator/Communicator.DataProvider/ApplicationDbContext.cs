@@ -1,4 +1,4 @@
-﻿using Communicator.DataProvider.Identity;
+﻿using Communicator.DataProvider.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

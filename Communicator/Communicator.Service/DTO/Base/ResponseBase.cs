@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Communicator.Service.DTO
+namespace Communicator.Service.DTO.Base
 {
     public class ResponseBase
     {

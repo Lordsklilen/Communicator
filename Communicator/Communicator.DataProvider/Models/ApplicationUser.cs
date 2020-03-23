@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Communicator.DataProvider.Identity
+namespace Communicator.DataProvider.Models
 {
     public class ApplicationUser : IdentityUser
     {

@@ -1,4 +1,5 @@
-﻿using Communicator.DataProvider.Identity;
+﻿using Communicator.DataProvider.Models;
+using Communicator.Service.DTO.Base;
 
 namespace Communicator.Service.DTO
 {
@@ -9,9 +10,16 @@ namespace Communicator.Service.DTO
         public string email;
         public string password;
     }
+
     public class RequestGetUser
     {
         public string UserName;
+    }
+
+    public class RequestAuthenticateUser
+    {
+        public string userName;
+        public string password;
     }
 
     //Responses
@@ -19,9 +27,16 @@ namespace Communicator.Service.DTO
     {
         public ApplicationUser User;
     }
+
     public class ResponseGetUser : ResponseBase
     {
         public string UserName;
         public ApplicationUser User;
+    }
+
+    public class ResponseAuthenticateUser : ResponseBase
+    {
+        public ApplicationUser User;
+        public bool IsSignedIn;
     }
 }

@@ -1,5 +1,5 @@
 using Communicator.DataProvider;
-using Communicator.DataProvider.Identity;
+using Communicator.DataProvider.Models;
 using Communicator.DataProvider.Repositories;
 using Communicator.Service.PublicInterfaces;
 using Communicator.Service.Services;
@@ -80,7 +80,9 @@ namespace Communicator.Website
         public void RegisterDependencies(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IChannelService, ChannelService>();
             services.AddTransient<RoleRepository>();
+            services.AddTransient<ChannelRepository>();
             services.AddTransient<UserRepository>();
             services.AddTransient<UserManager<ApplicationUser>>();
             services.AddTransient<SignInManager<ApplicationUser>>();

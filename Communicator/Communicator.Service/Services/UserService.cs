@@ -1,8 +1,8 @@
 ﻿using Communicator.DataProvider.Repositories;
 using Communicator.Service.DTO;
+using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
 using System;
-using System.Threading.Tasks;
 
 namespace Communicator.Service.Services
 {
@@ -20,22 +20,19 @@ namespace Communicator.Service.Services
 
         //USERS
 
-        public async Task<bool> SignOut()
+        public void SignOutAsync()
         {
-            await _userRepository.SignOutAsync();
-            return true;
+            _userRepository.SignOutAsync();
         }
-        public async Task<ResponseCreateUser> CreateUser(RequestCreateUser r)
+        public ResponseCreateUser CreateUser(RequestCreateUser r)
         {
             try
             {
-                await _roleRepository.CreateDefaultRoles();
-
-                var isCreated = await _userRepository.CreateUser(r.userName, r.email, r.password);
-
+                _roleRepository.CreateDefaultRoles();
+                var isCreated = _userRepository.Create(r.userName, r.email, r.password);
                 if (isCreated)
                 {
-                    var user = await GetUser(new RequestGetUser()
+                    var user = GetUser(new RequestGetUser()
                     {
                         UserName = r.userName
                     });
@@ -44,7 +41,6 @@ namespace Communicator.Service.Services
                         message = $"User \"{r.userName}\" been created succesfully",
                         status = ResponseStatus.Success,
                         User = user.User
-
                     };
                 }
                 return new ResponseCreateUser()
@@ -63,11 +59,12 @@ namespace Communicator.Service.Services
                 };
             }
         }
-        public async Task<ResponseGetUser> GetUser(RequestGetUser request)
+
+        public ResponseGetUser GetUser(RequestGetUser request)
         {
             try
             {
-                var user = await _userRepository.GetUser(request.UserName);
+                var user = _userRepository.GetByName(request.UserName);
                 if (user != null)
                 {
                     return new ResponseGetUser()
@@ -93,12 +90,12 @@ namespace Communicator.Service.Services
                 };
             }
         }
-        public async Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request)
+        public ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request)
         {
             try
             {
-                var user = await _userRepository.GetUser(request.userName);
-                var result = await _userRepository.SignInUser(user, request.password);
+                var user = _userRepository.GetByName(request.userName);
+                var result = _userRepository.SignIn(user, request.password);
                 if (result)
                 {
                     return new ResponseAuthenticateUser()
@@ -126,11 +123,11 @@ namespace Communicator.Service.Services
             }
         }
         //ROLES
-        public async Task<ResponseBase> CreateRole(string roleName)
+        public ResponseBase CreateRole(string roleName)
         {
             try
             {
-                var created = await _roleRepository.CreateRole(roleName);
+                var created = _roleRepository.Create(roleName);
                 if (created.Succeeded)
                 {
                     return new ResponseBase()
@@ -156,6 +153,5 @@ namespace Communicator.Service.Services
                 };
             }
         }
-
     }
 }
