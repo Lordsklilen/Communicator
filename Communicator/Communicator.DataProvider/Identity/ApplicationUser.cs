@@ -6,5 +6,6 @@ namespace Communicator.DataProvider.Identity
     public class ApplicationUser : IdentityUser
     {
         public ICollection<ApplicationUser> Friends { get; set; }
+        public ICollection<ApplicationUserChannel> ApplicationUserChannels { get; set; }
     }
 }

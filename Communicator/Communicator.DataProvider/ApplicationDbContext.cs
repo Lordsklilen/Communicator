@@ -17,5 +17,20 @@ namespace Communicator.DataProvider
         {
             return Database.CanConnect();
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ApplicationUserChannel>()
+                .HasKey(bc => new { bc.ChannelId, bc.UserId });
+            modelBuilder.Entity<ApplicationUserChannel>()
+                .HasOne(bc => bc.Channel)
+                .WithMany(b => b.ApplicationUserChannels)
+                .HasForeignKey(bc => bc.ChannelId);
+            modelBuilder.Entity<ApplicationUserChannel>()
+                .HasOne(bc => bc.User)
+                .WithMany(c => c.ApplicationUserChannels)
+                .HasForeignKey(bc => bc.UserId);
+        }
     }
 }

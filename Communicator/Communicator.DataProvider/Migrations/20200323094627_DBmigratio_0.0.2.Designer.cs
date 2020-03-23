@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Communicator.DataProvider.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200322212830_DbschemaMigration")]
-    partial class DbschemaMigration
+    [Migration("20200323094627_DBmigratio_0.0.2")]
+    partial class DBmigratio_002
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,9 +65,6 @@ namespace Communicator.DataProvider.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ChannelId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -116,8 +113,6 @@ namespace Communicator.DataProvider.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("ChannelId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -127,6 +122,21 @@ namespace Communicator.DataProvider.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUserChannel", b =>
+                {
+                    b.Property<int>("ChannelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ChannelId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ApplicationUserChannel");
                 });
 
             modelBuilder.Entity("Communicator.DataProvider.Identity.Channel", b =>
@@ -281,10 +291,21 @@ namespace Communicator.DataProvider.Migrations
                     b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany("Friends")
                         .HasForeignKey("ApplicationUserId");
+                });
 
-                    b.HasOne("Communicator.DataProvider.Identity.Channel", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ChannelId");
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUserChannel", b =>
+                {
+                    b.HasOne("Communicator.DataProvider.Identity.Channel", "Channel")
+                        .WithMany("ApplicationUserChannels")
+                        .HasForeignKey("ChannelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", "User")
+                        .WithMany("ApplicationUserChannels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Communicator.DataProvider.Identity.Message", b =>
