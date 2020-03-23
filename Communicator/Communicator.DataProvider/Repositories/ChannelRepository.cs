@@ -5,7 +5,7 @@ namespace Communicator.DataProvider.Repositories
 {
     public class ChannelRepository
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         public ChannelRepository(ApplicationDbContext context)
         {
             _context = context;

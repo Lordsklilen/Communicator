@@ -68,5 +68,14 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(true);
         }
 
+        [HttpGet]
+        [Route("Api/GetUsers")]
+        [Authorize(Roles = "User")]
+        public string CheckAuthorization([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestGetUsers>(json);
+            return PrepareResponse(_userService.GetUsersById(request));
+        }
+
     }
 }

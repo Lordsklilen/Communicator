@@ -20,7 +20,7 @@ namespace Communicator.Service.Services
         {
             try
             {
-                var users = _userRepository.GetByName(r.userIds);
+                var users = _userRepository.GetById(r.userIds);
                 var channel = _channelRepository.Create(users, r.channelname);
 
                 if (channel != null)

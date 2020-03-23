@@ -4,21 +4,24 @@ using Communicator.Service.DTO.Base;
 namespace Communicator.Service.DTO
 {
     //Requests
-    public class RequestCreateUser
+    public class RequestCreateUser : RequestBase
     {
-        public string userName;
         public string email;
         public string password;
     }
 
-    public class RequestGetUser
+    public class RequestGetUser : RequestBase
     {
-        public string UserName;
     }
 
-    public class RequestAuthenticateUser
+    public class RequestGetUsers
     {
-        public string userName;
+        public string word;
+        public string IdUser;
+    }
+
+    public class RequestAuthenticateUser : RequestBase
+    {
         public string password;
     }
 
@@ -26,6 +29,10 @@ namespace Communicator.Service.DTO
     public class ResponseCreateUser : ResponseBase
     {
         public ApplicationUser User;
+    }
+    public class ResponseGetUsers : ResponseBase
+    {
+        public ApplicationUser[] users;
     }
 
     public class ResponseGetUser : ResponseBase

@@ -1,5 +1,7 @@
-﻿using Communicator.Service.PublicInterfaces;
+﻿using Communicator.Service.DTO;
+using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Communicator.Website.Controllers
 {
@@ -13,6 +15,11 @@ namespace Communicator.Website.Controllers
         public ChannelController(IChannelService service)
         {
             _channelService = service;
+        }
+        public string CreateChannel([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestCreateChannel>(json);
+            return PrepareResponse(_channelService.CreateChannel(request));
         }
     }
 }

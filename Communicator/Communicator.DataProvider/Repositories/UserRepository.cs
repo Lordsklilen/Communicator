@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Communicator.DataProvider.Repositories
 {
@@ -9,9 +10,11 @@ namespace Communicator.DataProvider.Repositories
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
         private readonly PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
-        public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -40,21 +43,30 @@ namespace Communicator.DataProvider.Repositories
             return res;
         }
 
-        public ApplicationUser GetByName(string userName)
+        public ApplicationUser GetById(string id)
         {
-            return _userManager.FindByNameAsync(userName).Result;
+            return _userManager.FindByIdAsync(id).Result;
         }
 
-        public HashSet<ApplicationUser> GetByName(string[] userNames)
+        public HashSet<ApplicationUser> GetById(string[] ids)
         {
             var result = new HashSet<ApplicationUser>();
-            foreach (var userName in userNames)
+            foreach (var id in ids)
             {
-                result.Add(_userManager.FindByNameAsync(userName).Result);
+                result.Add(_userManager.FindByIdAsync(id).Result);
             }
             return result;
         }
 
+
+        //Friends list
+        public IEnumerable<ApplicationUser> GetUsersById(string word)
+        {
+            var users = _context.Users
+                .Where(x => x.Id.Contains(word))
+                .AsEnumerable();
+            return users;
+        }
 
         // SignIn/Out
         public bool SignIn(ApplicationUser user, string password)

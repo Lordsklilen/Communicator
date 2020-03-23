@@ -10,5 +10,6 @@ namespace Communicator.Service.PublicInterfaces
         ResponseBase CreateRole(string roleName);
         ResponseGetUser GetUser(RequestGetUser request);
         void SignOutAsync();
+        ResponseGetUsers GetUsersById(RequestGetUsers request);
     }
 }

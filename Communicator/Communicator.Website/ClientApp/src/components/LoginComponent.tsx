@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Label, FormGroup, Input,  NavbarToggler, NavbarBrand, Container, Navbar, NavItem, Collapse, NavLink } from 'reactstrap';
 import * as LoginStore from '../store/Login';
 import { LoginState } from '../store/Login';
-import { RouteComponentProps, Redirect } from 'react-router';
+import { RouteComponentProps} from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 import { CookiesManager } from '../Managers/CookiesManager'
@@ -76,7 +76,7 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                             </FormGroup>
                             <Label className="errorField">{this.state.errorMessage}</Label>
                             <Label className="errorField">{this.props.errorMessage}</Label>
-                            <Input type="submit" block value="Login"/>
+                            <Input type="submit" value="Login"/>
                         </form>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userName: userName,
+                UserId: userName,
                 password: password
             })
         };

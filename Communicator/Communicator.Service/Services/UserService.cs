@@ -3,6 +3,7 @@ using Communicator.Service.DTO;
 using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
 using System;
+using System.Linq;
 
 namespace Communicator.Service.Services
 {
@@ -17,35 +18,34 @@ namespace Communicator.Service.Services
             _userRepository = userRepository;
         }
 
-
         //USERS
-
         public void SignOutAsync()
         {
             _userRepository.SignOutAsync();
         }
+
         public ResponseCreateUser CreateUser(RequestCreateUser r)
         {
             try
             {
                 _roleRepository.CreateDefaultRoles();
-                var isCreated = _userRepository.Create(r.userName, r.email, r.password);
+                var isCreated = _userRepository.Create(r.UserId, r.email, r.password);
                 if (isCreated)
                 {
                     var user = GetUser(new RequestGetUser()
                     {
-                        UserName = r.userName
+                        UserId = r.UserId
                     });
                     return new ResponseCreateUser()
                     {
-                        message = $"User \"{r.userName}\" been created succesfully",
+                        message = $"User \"{r.UserId}\" been created succesfully",
                         status = ResponseStatus.Success,
                         User = user.User
                     };
                 }
                 return new ResponseCreateUser()
                 {
-                    message = $"User \"{r.userName}\" cannot be created due to unknown problem.",
+                    message = $"User \"{r.UserId}\" cannot be created due to unknown problem.",
                     status = ResponseStatus.Error
                 };
             }
@@ -53,7 +53,7 @@ namespace Communicator.Service.Services
             {
                 return new ResponseCreateUser()
                 {
-                    message = $"User \"{r.userName}\" cannot be created.",
+                    message = $"User \"{r.UserId}\" cannot be created.",
                     exception = ex,
                     status = ResponseStatus.Error
                 };
@@ -64,19 +64,19 @@ namespace Communicator.Service.Services
         {
             try
             {
-                var user = _userRepository.GetByName(request.UserName);
+                var user = _userRepository.GetById(request.UserId);
                 if (user != null)
                 {
                     return new ResponseGetUser()
                     {
-                        message = $"User \"{user.UserName}\" is correct.",
+                        message = $"User \"{user.Id}\" is correct.",
                         status = ResponseStatus.Success,
                         User = user
                     };
                 }
                 return new ResponseGetUser()
                 {
-                    message = $"User \"{request.UserName}\" cannot be get.",
+                    message = $"User \"{request.UserId}\" cannot be get.",
                     status = ResponseStatus.Error
                 };
             }
@@ -84,23 +84,24 @@ namespace Communicator.Service.Services
             {
                 return new ResponseGetUser()
                 {
-                    message = $"User \"{request.UserName}\" cannot be get.",
+                    message = $"User \"{request.UserId}\" cannot be get.",
                     status = ResponseStatus.Error,
                     exception = ex
                 };
             }
         }
+
         public ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request)
         {
             try
             {
-                var user = _userRepository.GetByName(request.userName);
+                var user = _userRepository.GetById(request.UserId);
                 var result = _userRepository.SignIn(user, request.password);
                 if (result)
                 {
                     return new ResponseAuthenticateUser()
                     {
-                        message = $"User \"{request.userName}\" is authenticated.",
+                        message = $"User \"{request.UserId}\" is authenticated.",
                         status = ResponseStatus.Success,
                         IsSignedIn = result,
                         User = user
@@ -108,7 +109,7 @@ namespace Communicator.Service.Services
                 }
                 return new ResponseAuthenticateUser()
                 {
-                    message = $"User \"{request.userName}\" cannot be authenticated.",
+                    message = $"User \"{request.UserId}\" cannot be authenticated.",
                     status = ResponseStatus.Error
                 };
             }
@@ -116,12 +117,45 @@ namespace Communicator.Service.Services
             {
                 return new ResponseAuthenticateUser()
                 {
-                    message = $"User \"{request.userName}\" cannot be authenticated.",
+                    message = $"User \"{request.UserId}\" cannot be authenticated.",
                     status = ResponseStatus.Error,
                     exception = ex
                 };
             }
         }
+
+        //Friends List
+        public ResponseGetUsers GetUsersById(RequestGetUsers request)
+        {
+            try
+            {
+                var users = _userRepository.GetUsersById(request.word);
+                if (users != null)
+                {
+                    return new ResponseGetUsers()
+                    {
+                        message = $"Users \"{request.word}\" searched succesfully",
+                        status = ResponseStatus.Success,
+                        users = users.ToArray()
+                    };
+                }
+                return new ResponseGetUsers()
+                {
+                    message = $"Users \"{request.word}\" cannot be found.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseGetUsers()
+                {
+                    message = $"User \"{request.word}\" cannot be found.",
+                    status = ResponseStatus.Error,
+                    exception = ex
+                };
+            }
+        }
+
         //ROLES
         public ResponseBase CreateRole(string roleName)
         {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavItem, NavLink, Navbar, Container, NavbarBrand, NavbarToggler, Collapse } from 'reactstrap';
+import { NavItem, NavLink, Navbar, Container, NavbarBrand, NavbarToggler, Collapse, Input } from 'reactstrap';
 import { RouteComponentProps } from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import { ApplicationUser } from '../store/Models/ApplicationUser';
 import { Link } from 'react-router-dom';
 import '../styles/Login.css';
 import '../styles/ChatMessages.css';
+import '../styles/Search.css';
 
 
 type MessagesProps =
@@ -20,10 +21,6 @@ type MessagesProps =
 
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
-    constructor(props: MessagesProps) {
-        super(props);
-
-    }
     state: Readonly<MessagesState> = {
         UserName: "",
         IsSignedIn: false,
@@ -36,6 +33,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
     }
+
     public render() {
         return (
             <React.Fragment>
@@ -50,7 +48,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                         <NavLink className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
                                     </NavItem>
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)}>Log out</NavLink>
+                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
                                     </NavItem>
                                 </ul>
                             </Collapse>
@@ -65,14 +63,16 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             <div className="inbox_people">
                                 <div className="headind_srch">
                                     <div className="recent_heading">
-                                        <h4>Recent</h4>
-                                    </div>
-                                    <div className="srch_bar">
+                                        <h4>Friends</h4>
+                                        <div>
+                                            <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends"/>
+                                        </div>
+                                        <h4>Search</h4>
                                         <div className="stylish-input-group">
-                                            <input type="text" className="search-bar" placeholder="Search" />
                                             <span className="input-group-addon">
-                                                <button type="button"> <i className="fa fa-search" aria-hidden="true"></i> </button>
-                                            </span> </div>
+                                                <Input type="button"> <i className="fa fa-search" aria-hidden="true"></i> </Input>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="inbox_chat">
@@ -123,10 +123,27 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             </div>
                         </div>
                     </div></div>
+
+
+                {/* Search Form */}
+                <div className="form-popupHide" id="SearchDiv">
+                    <div className="FormBody">
+                        <div className="PopupSearch">
+                            <input type="text" placeholder="Search.." name="search" />
+                            <button className="fa fa-search fa-lg searchSubmit"/>
+                            <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)}/>
+                        </div>
+                    </div>
+                </div>
             </React.Fragment>
         );
     }
-
+    ShowSearch(event: React.FormEvent<HTMLInputElement>) {
+        (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupShow")
+    }
+    HideSearch(event: React.FormEvent<HTMLSpanElement>) {
+        (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide")
+    }
     private toggle = () => {
         this.setState({
             isOpen: !this.state.isOpen
@@ -142,7 +159,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         fetch('/User/Api/SignOut', requestOptions)
             .then(response => response.json() as Promise<boolean>)
             .then(data => {
-                console.log("Response recived")
                 this.setState({ UserName: "" });
                 CookiesManager.FillUserName("");
                 this.props.history.push('/');
@@ -152,12 +168,11 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
 
     GetUser(userName: string) {
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userName: userName,
+                UserId: userName,
             })
         };
         fetch('/User/Api/GetUser', requestOptions)

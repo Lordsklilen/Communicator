@@ -1,0 +1,81 @@
+﻿* {
+    box-sizing: border-box;
+}
+
+.PopupSearch input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 70%;
+    background: #f1f1f1;
+}
+.PopupSearch button {
+    height: 47px;
+}
+.searchSubmit {
+    float: left;
+    width: 15%;
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none; 
+    cursor: pointer;
+}
+
+    .searchSubmit:hover {
+        background: #0b7dda;
+    }
+
+/* Clear floats */
+.PopupSearch::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.form-popupShow {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.75)
+}
+
+.form-popupHide {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.FormBody {
+    position: relative;
+    top: 20%;
+    width: 50%;
+    margin: 0 auto;
+    border: 1px solid grey;
+}
+
+.exitSearch {
+    float: left;
+    width: 15%;
+    padding: 10px;
+    background: #f44336;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+}
+
+    .exitSearch :hover {
+        background: #e51400;
+    }

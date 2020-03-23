@@ -8,4 +8,8 @@ namespace Communicator.Service.DTO.Base
         public ResponseStatus status;
         public Exception exception;
     }
+    public class RequestBase
+    {
+        public string UserId;
+    }
 }
