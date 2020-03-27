@@ -14,10 +14,9 @@ namespace Communicator.Service.DTO
     {
     }
 
-    public class RequestGetUsers
+    public class RequestGetUsers : RequestBase
     {
         public string word;
-        public string IdUser;
     }
 
     public class RequestAuthenticateUser : RequestBase

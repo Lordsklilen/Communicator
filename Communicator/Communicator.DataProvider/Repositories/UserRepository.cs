@@ -36,8 +36,8 @@ namespace Communicator.DataProvider.Repositories
                 UserName = userName
             };
             user.PasswordHash = hasher.HashPassword(user, password);
-            _userManager.CreateAsync(user).RunSynchronously();
-            _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole).RunSynchronously();
+            _userManager.CreateAsync(user).Wait();
+            _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole).Wait();
 
             var res = SignIn(user, password);
             return res;
@@ -60,10 +60,10 @@ namespace Communicator.DataProvider.Repositories
 
 
         //Friends list
-        public IEnumerable<ApplicationUser> GetUsersById(string word)
+        public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)
         {
             var users = _context.Users
-                .Where(x => x.Id.Contains(word))
+                .Where(x => x.Id.Contains(word) && x.Id != userId)
                 .AsEnumerable();
             return users;
         }

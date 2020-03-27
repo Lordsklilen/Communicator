@@ -9,6 +9,7 @@
     float: left;
     width: 70%;
     background: #f1f1f1;
+    margin-bottom:10px;
 }
 .PopupSearch button {
     height: 47px;
@@ -79,3 +80,13 @@
     .exitSearch :hover {
         background: #e51400;
     }
+.FormBody {
+    padding: 50px;
+
+
+}
+.SearchSingleUser {
+    border: 1px solid grey;
+    padding: 4px;
+    background: #f1f1f1;
+}

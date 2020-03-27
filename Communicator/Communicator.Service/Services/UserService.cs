@@ -129,7 +129,7 @@ namespace Communicator.Service.Services
         {
             try
             {
-                var users = _userRepository.GetUsersById(request.word);
+                var users = _userRepository.GetUsersById(request.word,request.UserId);
                 if (users != null)
                 {
                     return new ResponseGetUsers()

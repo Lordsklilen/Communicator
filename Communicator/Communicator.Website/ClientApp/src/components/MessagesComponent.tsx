@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import '../styles/Login.css';
 import '../styles/ChatMessages.css';
 import '../styles/Search.css';
+import { ReactComponent } from '*.svg';
 
 
 type MessagesProps =
@@ -23,6 +24,9 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
         UserName: "",
+        FriendsList: this.props.FriendsList,
+        Messages: this.props.Messages,
+        SearchedFreinds: this.props.SearchedFreinds,
         IsSignedIn: false,
         User: null,
         isOpen: false
@@ -65,12 +69,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                     <div className="recent_heading">
                                         <h4>Friends</h4>
                                         <div>
-                                            <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends"/>
+                                            <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
                                         </div>
                                         <h4>Search</h4>
                                         <div className="stylish-input-group">
                                             <span className="input-group-addon">
-                                                <Input type="button"> <i className="fa fa-search" aria-hidden="true"></i> </Input>
+                                                <Input type="text"> <i className="fa fa-search" aria-hidden="true"></i> </Input>
                                             </span>
                                         </div>
                                     </div>
@@ -129,20 +133,35 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 <div className="form-popupHide" id="SearchDiv">
                     <div className="FormBody">
                         <div className="PopupSearch">
-                            <input type="text" placeholder="Search.." name="search" />
-                            <button className="fa fa-search fa-lg searchSubmit"/>
-                            <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)}/>
+                            <input id="SearchFriendsText" type="text" placeholder="Search.." name="search" />
+                            <button className="fa fa-search fa-lg searchSubmit" onClick={this.SearchForFriends.bind(this)} />
+                            <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)} />
+                        </div>
+                        <div className="SearchedFriends">
+                            {this.RenderFriends()}
                         </div>
                     </div>
                 </div>
             </React.Fragment>
         );
     }
+    RenderFriends() {
+        return this.props.SearchedFreinds.map((friend: ApplicationUser, i) => {
+            return (<div className="SearchSingleUser" onClick={this.ChooseNewFriend.bind(this)}><h4>{friend.UserName}</h4></div>)
+        })
+    }
     ShowSearch(event: React.FormEvent<HTMLInputElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupShow")
     }
     HideSearch(event: React.FormEvent<HTMLSpanElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide")
+    }
+    SearchForFriends(event: React.FormEvent<HTMLButtonElement>) {
+        let searchPhrase = (document.getElementById('SearchFriendsText') as HTMLInputElement).value;
+        this.props.SearchForFriends(searchPhrase, this.state.UserName);
+    }
+    ChooseNewFriend(event: React.FormEvent<HTMLDivElement>) {
+        console.log("clicked");
     }
     private toggle = () => {
         this.setState({
@@ -163,9 +182,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 CookiesManager.FillUserName("");
                 this.props.history.push('/');
             });
-
     }
-
 
     GetUser(userName: string) {
         const requestOptions = {
@@ -187,13 +204,8 @@ export default connect(
     MessagesStore.actionCreators
 )(MessagesComponent as any);
 
-export interface ResponseFriendsListAction {
-    type: 'ResponseCreateUserAction_action',
-    message: string,
-    status: Status
-}
+
 export interface ResponseGetUser {
-    type: 'ResponseAuthenticate_action',
     message: string,
     status: Status
     User: ApplicationUser | null
