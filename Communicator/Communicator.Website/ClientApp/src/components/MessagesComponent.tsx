@@ -13,6 +13,7 @@ import '../styles/Login.css';
 import '../styles/ChatMessages.css';
 import '../styles/Search.css';
 import { ReactComponent } from '*.svg';
+import { Data } from 'popper.js';
 
 
 type MessagesProps =
@@ -23,17 +24,23 @@ type MessagesProps =
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
+
         UserName: "",
         FriendsList: this.props.FriendsList,
         Messages: this.props.Messages,
-        SearchedFreinds: this.props.SearchedFreinds,
+        SearchedFriends: this.props.SearchedFriends,
         IsSignedIn: false,
         User: null,
-        isOpen: false
+        isOpen: false,
+        Channels: this.props.Channels,
     };
 
     componentDidMount() {
         let username = CookiesManager.GetUserName();
+        if (username === "") {
+            this.props.history.push("/");
+        }
+        this.props.GetUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
     }
@@ -146,56 +153,41 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         );
     }
     RenderFriends() {
-        return this.props.SearchedFreinds.map((friend: ApplicationUser, i) => {
-            return (<div className="SearchSingleUser" onClick={this.ChooseNewFriend.bind(this)}><h4>{friend.UserName}</h4></div>)
+        return this.props.SearchedFriends.map((friend: ApplicationUser, i) => {
+            return (<h4 className="SearchSingleUser" onClick={this.ChooseNewFriend.bind(this)}>{friend.UserName}</h4>)
         })
     }
+
     ShowSearch(event: React.FormEvent<HTMLInputElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupShow")
     }
+
     HideSearch(event: React.FormEvent<HTMLSpanElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide")
     }
+
     SearchForFriends(event: React.FormEvent<HTMLButtonElement>) {
         let searchPhrase = (document.getElementById('SearchFriendsText') as HTMLInputElement).value;
         this.props.SearchForFriends(searchPhrase, this.state.UserName);
     }
-    ChooseNewFriend(event: React.FormEvent<HTMLDivElement>) {
-        console.log("clicked");
+
+    ChooseNewFriend(event: React.FormEvent<HTMLElement>) {
+        let friendName = event.currentTarget.innerHTML as string;
+        console.log("clicked friend " + friendName);
+        this.props.CreateChannel(this.state.UserName, "channelname", [this.state.UserName, friendName])
     }
+
     private toggle = () => {
         this.setState({
             isOpen: !this.state.isOpen
         });
     }
-    LogOut(event: React.FormEvent<HTMLInputElement>) {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-            })
-        };
-        fetch('/User/Api/SignOut', requestOptions)
-            .then(response => response.json() as Promise<boolean>)
-            .then(data => {
-                this.setState({ UserName: "" });
-                CookiesManager.FillUserName("");
-                this.props.history.push('/');
-            });
-    }
 
-    GetUser(userName: string) {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                UserId: userName,
-            })
-        };
-        fetch('/User/Api/GetUser', requestOptions)
-            .then(response => response.json() as Promise<ResponseGetUser>)
-            .then(data => {
-            });
+    LogOut(event: React.FormEvent<HTMLInputElement>) {
+        this.props.LogOut();
+        this.setState({ UserName: "" });
+        CookiesManager.FillUserName("");
+        this.props.history.push('/');
     }
 }
 
@@ -203,10 +195,3 @@ export default connect(
     (state: ApplicationState) => state.messages,
     MessagesStore.actionCreators
 )(MessagesComponent as any);
-
-
-export interface ResponseGetUser {
-    message: string,
-    status: Status
-    User: ApplicationUser | null
-}

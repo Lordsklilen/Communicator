@@ -18,7 +18,10 @@ namespace Communicator.Website.Controllers
         }
         protected string PrepareResponse(object response)
         {
-            return JsonConvert.SerializeObject(response);
+            return JsonConvert.SerializeObject(response, new JsonSerializerSettings()
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
         }
     }
 }

@@ -4,7 +4,7 @@ using Communicator.Service.DTO.Base;
 namespace Communicator.Service.DTO
 {
     //Requests
-    public class RequestCreateChannel
+    public class RequestCreateChannel : RequestBase
     {
         public string[] userIds;
         public string channelname;

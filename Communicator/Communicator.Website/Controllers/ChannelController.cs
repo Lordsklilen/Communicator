@@ -1,5 +1,6 @@
 ﻿using Communicator.Service.DTO;
 using Communicator.Service.PublicInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -16,6 +17,9 @@ namespace Communicator.Website.Controllers
         {
             _channelService = service;
         }
+        [HttpPost]
+        [Route("Api/CreateChannel")]
+        [Authorize(Roles = "User")]
         public string CreateChannel([FromBody] JsonElement json)
         {
             var request = ToObject<RequestCreateChannel>(json);
