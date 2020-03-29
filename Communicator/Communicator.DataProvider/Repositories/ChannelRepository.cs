@@ -1,5 +1,7 @@
 ﻿using Communicator.DataProvider.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Communicator.DataProvider.Repositories
 {
@@ -30,6 +32,15 @@ namespace Communicator.DataProvider.Repositories
             _context.Add(channel);
             _context.SaveChanges();
             return channel;
+        }
+        public ICollection<Channel> GetUserChannels(string UserId)
+        {
+            var channels = _context.Channels
+                .Include(x => x.ApplicationUserChannels)
+                .ThenInclude(x => x.Channel)
+                .Where(x => x.ApplicationUserChannels.Any(y => y.UserId == UserId))
+                .ToList();
+            return channels;
         }
     }
 }

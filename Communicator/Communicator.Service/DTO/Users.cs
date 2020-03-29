@@ -31,7 +31,7 @@ namespace Communicator.Service.DTO
     }
     public class ResponseGetUsers : ResponseBase
     {
-        public ApplicationUser[] users;
+        public ApplicationUser[] SearchedFriends;
     }
 
     public class ResponseGetUser : ResponseBase

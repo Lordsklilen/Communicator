@@ -25,5 +25,15 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestCreateChannel>(json);
             return PrepareResponse(_channelService.CreateChannel(request));
         }
+
+
+        [HttpPost]
+        [Route("Api/GetChannelsForUser")]
+        [Authorize(Roles = "User")]
+        public string GetChannelsForUser([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestGetUserChannels>(json);
+            return PrepareResponse(_channelService.GetChannelsForUser(request));
+        }
     }
 }

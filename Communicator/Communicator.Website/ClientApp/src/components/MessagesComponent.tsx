@@ -6,14 +6,12 @@ import { connect } from 'react-redux';
 import * as MessagesStore from '../store/Messages';
 import { MessagesState } from '../store/Messages';
 import { CookiesManager } from '../Managers/CookiesManager';
-import { Status } from '../store/Models/Status';
 import { ApplicationUser } from '../store/Models/ApplicationUser';
 import { Link } from 'react-router-dom';
 import '../styles/Login.css';
 import '../styles/ChatMessages.css';
 import '../styles/Search.css';
-import { ReactComponent } from '*.svg';
-import { Data } from 'popper.js';
+import { Channel } from '../store/Models/Channel';
 
 
 type MessagesProps =
@@ -24,9 +22,8 @@ type MessagesProps =
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
-
         UserName: "",
-        FriendsList: this.props.FriendsList,
+        FriendsList: [],
         Messages: this.props.Messages,
         SearchedFriends: this.props.SearchedFriends,
         IsSignedIn: false,
@@ -34,13 +31,13 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         isOpen: false,
         Channels: this.props.Channels,
     };
-
     componentDidMount() {
         let username = CookiesManager.GetUserName();
         if (username === "") {
             this.props.history.push("/");
         }
         this.props.GetUser(username);
+        this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
     }
@@ -86,25 +83,9 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Channel list */}
                                 <div className="inbox_chat">
-                                    <div className="chat_list active_chat">
-                                        <div className="chat_people">
-                                            <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
-                                            <div className="chat_ib">
-                                                <h5>Sunil Rajput <span className="chat_date">Dec 25</span></h5>
-                                                <p>Test, which is a new approach to have all solutions astrology under one roof.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="chat_list">
-                                        <div className="chat_people">
-                                            <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
-                                            <div className="chat_ib">
-                                                <h5>Sunil Rajput <span className="chat_date">Dec 25</span></h5>
-                                                <p>Test, which is a new approach to have all solutions astrology under one roof.</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {this.RenderChannels()}
                                 </div>
                             </div>
 
@@ -153,9 +134,67 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         );
     }
     RenderFriends() {
-        return this.props.SearchedFriends.map((friend: ApplicationUser, i) => {
-            return (<h4 className="SearchSingleUser" onClick={this.ChooseNewFriend.bind(this)}>{friend.UserName}</h4>)
+        let friends = this.Friends();
+        return this.props.SearchedFriends.map((friend: ApplicationUser, i: number) => {
+            if (friends.includes(friend.UserName) || this.state.UserName === friend.UserName)
+                return "";
+            return (
+                <div className="chat_list" key={i.toString()} data-friendusername={friend.UserName} onClick={this.ChooseNewFriend.bind(this)}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="chat_ib">
+                            <h4>{friend.UserName}</h4>
+                        </div>
+                    </div>
+                </div>
+            )
         })
+    }
+
+    RenderChannels() {
+        if (this.props.Channels == null || this.props.Channels.length <= 0)
+            return "";
+        let UserName = this.state.UserName;
+        return this.props.Channels.map((channel: Channel, i) => {
+            let channelname = channel.ChannelName;
+            if (!channel.isGroupChannel) {
+                channelname = channel.UserIds.filter(function (id: string) {
+                    return id != UserName;
+                }).pop() as string;
+            }
+            return (
+                <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User Image" /> </div>
+                        <div className="chat_ib">
+                            <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
+                            <p>Mesage Text</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        });
+    }
+
+
+    Friends() {
+        let friends = this.props.Channels.filter((channel: Channel, i) => {
+            return !channel.isGroupChannel;
+
+        });
+        return friends.map((friend)  => {
+            return friend.UserIds.filter((id: string) => {
+                return id != this.state.UserName;
+            }).pop() as string;
+        });
+    }
+    SelectChannel(event: React.FormEvent<HTMLDivElement>) {
+        console.log("Channel selected id: " + event.currentTarget.dataset.channelid);
+        var elems = document.getElementsByClassName("active_chat");
+        [].forEach.call(elems, function (el: HTMLDivElement) {
+            el.classList.remove("active_chat");
+        });
+        event.currentTarget.classList.add("active_chat");
     }
 
     ShowSearch(event: React.FormEvent<HTMLInputElement>) {
@@ -172,9 +211,13 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     ChooseNewFriend(event: React.FormEvent<HTMLElement>) {
-        let friendName = event.currentTarget.innerHTML as string;
+        let friendName = event.currentTarget.dataset.friendusername as string;
         console.log("clicked friend " + friendName);
-        this.props.CreateChannel(this.state.UserName, "channelname", [this.state.UserName, friendName])
+        this.props.CreateChannel(this.state.UserName, "channelname", [this.state.UserName, friendName]);
+        (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide");
+        this.setState({
+            FriendsList: []
+        })
     }
 
     private toggle = () => {

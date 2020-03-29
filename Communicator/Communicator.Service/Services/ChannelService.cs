@@ -22,7 +22,7 @@ namespace Communicator.Service.Services
             {
                 var users = _userRepository.GetById(r.userIds);
                 var channel = _channelRepository.Create(users, r.channelname);
-
+                var channels = _channelRepository.GetUserChannels(r.UserId);
                 if (channel != null)
                 {
 
@@ -30,7 +30,7 @@ namespace Communicator.Service.Services
                     {
                         message = $"Chanel \"{r.channelname}\" been created succesfully",
                         status = ResponseStatus.Success,
-                        channel = channel
+                        channels = channels
                     };
                 }
                 return new ResponseCreateChannel()
@@ -50,6 +50,41 @@ namespace Communicator.Service.Services
             }
         }
 
-        
+        public ResponseGetUserChannels GetChannelsForUser(RequestGetUserChannels r)
+        {
+            try
+            {
+                var channels = _channelRepository.GetUserChannels(r.UserId);
+
+                if (channels != null)
+                {
+
+                    return new ResponseGetUserChannels()
+                    {
+                        message = $"Channels \"{r.UserId}\" get  succesfully",
+                        status = ResponseStatus.Success,
+                        channels = channels
+                    };
+                }
+                return new ResponseGetUserChannels()
+                {
+                    message = $"Cannot get chanenls for user  \"{r.UserId}\" due to unknown problem.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseGetUserChannels()
+                {
+                    message = $"Cannot get chanenls for user  \"{r.UserId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
+
+
+
+
     }
 }

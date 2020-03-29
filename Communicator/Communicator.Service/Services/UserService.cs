@@ -11,11 +11,13 @@ namespace Communicator.Service.Services
     {
         private readonly RoleRepository _roleRepository;
         private readonly UserRepository _userRepository;
+        private readonly ChannelRepository _channelRepository;
 
-        public UserService(RoleRepository roleRepository, UserRepository userRepository)
+        public UserService(RoleRepository roleRepository, UserRepository userRepository, ChannelRepository channelRepository)
         {
             _roleRepository = roleRepository;
             _userRepository = userRepository;
+            _channelRepository = channelRepository;
         }
 
         //USERS
@@ -129,14 +131,14 @@ namespace Communicator.Service.Services
         {
             try
             {
-                var users = _userRepository.GetUsersById(request.word,request.UserId);
-                if (users != null)
+                var SearchedFriends = _userRepository.GetUsersById(request.word, request.UserId);
+                if (SearchedFriends != null)
                 {
                     return new ResponseGetUsers()
                     {
                         message = $"Users \"{request.word}\" searched succesfully",
                         status = ResponseStatus.Success,
-                        users = users.ToArray()
+                        SearchedFriends = SearchedFriends.ToArray()
                     };
                 }
                 return new ResponseGetUsers()

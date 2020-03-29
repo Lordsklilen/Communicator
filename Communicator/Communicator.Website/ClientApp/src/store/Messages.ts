@@ -9,40 +9,12 @@ export interface MessagesState {
     UserName: string;
     IsSignedIn: boolean;
     User: ApplicationUser | null;
-    FriendsList: ApplicationUser[];
+    FriendsList: string[];
     Messages: Message[];
     Channels: Channel[];
     SearchedFriends: ApplicationUser[];
-    isOpen:boolean
+    isOpen: boolean
 }
-
-// ACTIONS
-export interface ResponseFriendsListAction {
-    type: 'ResponseCreateUserAction_action',
-    message: string,
-    status: Status
-}
-export interface ResponseGetSearchUsers {
-    type: 'ResponseGetSearchUsers',
-    message: string,
-    status: Status
-    users: ApplicationUser[]
-}
-export interface ResponseCreateChannel{
-    type: 'ResponseCreateChannel',
-    message: string,
-    status: Status
-    channels: Channel[]
-    channel: Channel
-}
-
-export interface ResponseGetUser {
-    type: 'ResponseGetUser',
-    message: string,
-    status: Status
-    User: ApplicationUser | null
-}
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser;
 
 // ACTION CREATORS
 export const actionCreators = {
@@ -62,12 +34,12 @@ export const actionCreators = {
                     type: 'ResponseGetSearchUsers',
                     message: data.message,
                     status: data.status as Status,
-                    users: data.users as ApplicationUser[]
+                    SearchedFriends: data.SearchedFriends as ApplicationUser[]
                 });
             });
     },
 
-    CreateChannel: (UserId:string, channelname :string, userIds: string[]): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    CreateChannel: (UserId: string, channelname: string, userIds: string[]): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -84,8 +56,7 @@ export const actionCreators = {
                     type: 'ResponseCreateChannel',
                     message: data.message,
                     status: data.status as Status,
-                    channels: data.channels as Channel[],
-                    channel: data.channel as Channel
+                    channels: data.channels as Channel[]
                 });
             });
     },
@@ -119,6 +90,26 @@ export const actionCreators = {
         };
         fetch('/User/Api/SignOut', requestOptions);
     },
+
+    GetChannelsForUser: (UserId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+            })
+        };
+        return fetch('/Channel/Api/GetChannelsForUser', requestOptions)
+            .then(response => response.json() as Promise<ResponseGetChannelsForUser>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseGetChannelsForUser',
+                    message: data.message,
+                    status: data.status as Status,
+                    channels: data.channels as Channel[]
+                });
+            });
+    },
 };
 
 // REDUCER
@@ -127,19 +118,19 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
         return {
             UserName: "",
             IsSignedIn: false,
-            User:null,
+            User: null,
             isOpen: false,
-            FriendsList: new Array(),
-            Messages: new Array(),
-            Channels: new Array(),
-            SearchedFriends: new Array(),
+            FriendsList: [],
+            Messages: [],
+            Channels: [],
+            SearchedFriends: [],
         };
     }
 
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'ResponseGetSearchUsers':
-            console.log("[ResponseGetSearchUsers.ResponseGetSearchUsers] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message + ", with status: " + action.status)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -148,22 +139,22 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 Channels: state.Channels,
                 isOpen: state.isOpen,
                 FriendsList: state.FriendsList,
-                SearchedFriends: action.users
+                SearchedFriends: action.SearchedFriends
             }
         case 'ResponseCreateChannel':
-            console.log("[ResponseGetSearchUsers.ResponseCreateChannel] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseCreateChannel] response recived, with message: " + action.message + ", with status: " + action.status)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                FriendsList: state.FriendsList,
+                FriendsList: [],
                 Messages: state.Messages,
                 Channels: action.channels,
                 SearchedFriends: state.SearchedFriends
             }
         case 'ResponseGetUser':
-            console.log("[ResponseGetSearchUsers.ResponseGetUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetUser] response recived, with message: " + action.message + ", with status: " + action.status)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -174,7 +165,51 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 Channels: state.Channels,
                 SearchedFriends: state.SearchedFriends
             }
+        case 'ResponseGetChannelsForUser':
+            console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                isOpen: state.isOpen,
+                FriendsList: state.FriendsList,
+                Messages: state.Messages,
+                Channels: action.channels,
+                SearchedFriends: state.SearchedFriends
+            }
         default:
             return state;
     }
 };
+
+
+
+// ACTIONS
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser;
+export interface ResponseGetSearchUsers {
+    type: 'ResponseGetSearchUsers',
+    message: string,
+    status: Status,
+    SearchedFriends: ApplicationUser[],
+}
+
+export interface ResponseCreateChannel {
+    type: 'ResponseCreateChannel',
+    message: string,
+    status: Status,
+    channels: Channel[],
+}
+
+export interface ResponseGetUser {
+    type: 'ResponseGetUser',
+    message: string,
+    status: Status,
+    User: ApplicationUser | null,
+}
+
+export interface ResponseGetChannelsForUser {
+    type: 'ResponseGetChannelsForUser',
+    message: string,
+    status: Status,
+    channels: Channel[],
+}
