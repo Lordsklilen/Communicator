@@ -1,6 +1,4 @@
 import { Action, Reducer } from 'redux';
-import { AppThunkAction } from './';
-import { Status } from './Models/Status';
 
 // STATE
 export interface RegisterState {

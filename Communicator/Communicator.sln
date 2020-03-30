@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communicator.Website", "Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communicator.Service", "Communicator.Service\Communicator.Service.csproj", "{DCC7358D-9826-4D2D-813A-BE72A53D2D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communicator.DataProvider", "Communicator.DataProvider\Communicator.DataProvider.csproj", "{A3E1D9AE-01A9-4081-A20D-949840C33ECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communicator.DataProvider", "Communicator.DataProvider\Communicator.DataProvider.csproj", "{A3E1D9AE-01A9-4081-A20D-949840C33ECD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

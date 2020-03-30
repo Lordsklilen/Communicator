@@ -1,14 +1,15 @@
 ﻿using Communicator.Service.DTO;
-using System.Threading.Tasks;
+using Communicator.Service.DTO.Base;
 
 namespace Communicator.Service.PublicInterfaces
 {
     public interface IUserService
     {
-        Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request);
-        Task<ResponseCreateUser> CreateUser(RequestCreateUser request);
-        Task<ResponseBase> CreateRole(string roleName);
-        Task<ResponseGetUser> GetUser(RequestGetUser request);
-        Task<bool> SignOut();
+        ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request);
+        ResponseCreateUser CreateUser(RequestCreateUser request);
+        ResponseBase CreateRole(string roleName);
+        ResponseGetUser GetUser(RequestGetUser request);
+        void SignOutAsync();
+        ResponseGetUsers GetUsersById(RequestGetUsers request);
     }
 }

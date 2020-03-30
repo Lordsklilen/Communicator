@@ -1,7 +1,6 @@
-﻿using Communicator.DataProvider.Identity;
+﻿using Communicator.DataProvider.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Threading.Tasks;
 
 namespace Communicator.DataProvider.Repositories
 {
@@ -13,40 +12,40 @@ namespace Communicator.DataProvider.Repositories
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> CreateRole(string roleName)
+        public IdentityResult Create(string roleName)
         {
-            var existRole = await _roleManager.FindByNameAsync(roleName);
+            var existRole = _roleManager.FindByNameAsync(roleName).Result;
             if (existRole != null)
             {
                 throw new Exception("Role is already existing. Cannot create new one");
             }
 
-            var response = await _roleManager.CreateAsync(new ApplicationRole(roleName)
+            var response = _roleManager.CreateAsync(new ApplicationRole(roleName)
             {
                 Id = roleName,
                 Name = roleName,
                 Description = "Sample Description",
                 CreatedDate = DateTime.UtcNow,
 
-            });
+            }).Result;
             return response;
         }
-        public async Task CreateDefaultRoles()
+        public void CreateDefaultRoles()
         {
             try
             {
-                var existRole = await _roleManager.FindByNameAsync(ApplicationRole.stadardRole);
+                var existRole = _roleManager.FindByNameAsync(ApplicationRole.stadardRole).Result;
                 if (existRole == null)
                 {
-                    await CreateRole(ApplicationRole.stadardRole);
+                    Create(ApplicationRole.stadardRole);
                 }
             }
             catch (Exception) { }
         }
 
-        public async Task<ApplicationRole> GetRoleByName(string roleName)
+        public ApplicationRole GetByName(string roleName)
         {
-            return await _roleManager.FindByNameAsync(roleName);
+            return _roleManager.FindByNameAsync(roleName).Result;
         }
     }
 }

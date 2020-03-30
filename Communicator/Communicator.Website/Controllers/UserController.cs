@@ -3,7 +3,6 @@ using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Communicator.Website.Controllers
 {
@@ -21,25 +20,25 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/Authenticate")]
-        public async Task<string> Authenticate([FromBody] JsonElement json)
+        public string Authenticate([FromBody] JsonElement json)
         {
             var request = ToObject<RequestAuthenticateUser>(json);
-            return PrepareResponse(await _userService.AuthenticateUser(request));
+            return PrepareResponse(_userService.AuthenticateUser(request));
         }
 
         [HttpPost]
         [Route("Api/CreateUser")]
-        public async Task<string> CreateUser([FromBody] JsonElement json)
+        public string CreateUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestCreateUser>(json);
-            return PrepareResponse(await _userService.CreateUser(request));
+            return PrepareResponse(_userService.CreateUser(request));
         }
 
         [HttpPost]
         [Route("Api/CreateRole")]
-        public async Task<string> CreateRole(string roleName)
+        public string CreateRole(string roleName)
         {
-            return PrepareResponse(await _userService.CreateRole(roleName));
+            return PrepareResponse(_userService.CreateRole(roleName));
         }
 
         //Authorized Methods
@@ -54,18 +53,28 @@ namespace Communicator.Website.Controllers
         [HttpPost]
         [Route("Api/GetUser")]
         [Authorize(Roles = "User")]
-        public async Task<string> GetUser([FromBody] JsonElement json)
+        public string GetUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUser>(json);
-            return PrepareResponse(await _userService.GetUser(request));
+            return PrepareResponse(_userService.GetUser(request));
         }
 
         [HttpPost]
         [Route("Api/SignOut")]
         [Authorize(Roles = "User")]
-        public async Task<string> SignOut([FromBody] JsonElement json)
+        public string SignOut()
         {
-            return PrepareResponse(await _userService.SignOut());
+            _userService.SignOutAsync();
+            return PrepareResponse(true);
+        }
+
+        [HttpPost]
+        [Route("Api/GetUsers")]
+        [Authorize(Roles = "User")]
+        public string CheckAuthorization([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestGetUsers>(json);
+            return PrepareResponse(_userService.GetUsersById(request));
         }
 
     }

@@ -1,7 +1,8 @@
-﻿using Communicator.DataProvider.Identity;
+﻿using Communicator.DataProvider.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Communicator.DataProvider.Repositories
 {
@@ -9,18 +10,20 @@ namespace Communicator.DataProvider.Repositories
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
         private readonly PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
-        public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
 
         //Users
-        public async Task<bool> CreateUser(string userName, string email, string password)
+        public bool Create(string userName, string email, string password)
         {
-            var existRole = await _userManager.FindByNameAsync(userName);
+            var existRole = _userManager.FindByNameAsync(userName).Result;
 
             if (existRole != null)
             {
@@ -33,21 +36,40 @@ namespace Communicator.DataProvider.Repositories
                 UserName = userName
             };
             user.PasswordHash = hasher.HashPassword(user, password);
-            await _userManager.CreateAsync(user);
-            await _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole);
+            _userManager.CreateAsync(user).Wait();
+            _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole).Wait();
 
-            var res = await SignInUser(user, password);
+            var res = SignIn(user, password);
             return res;
         }
 
-        public async Task<ApplicationUser> GetUser(string userName)
+        public ApplicationUser GetById(string id)
         {
-            return await _userManager.FindByNameAsync(userName);
+            return _userManager.FindByIdAsync(id).Result;
+        }
+
+        public HashSet<ApplicationUser> GetById(string[] ids)
+        {
+            var result = new HashSet<ApplicationUser>();
+            foreach (var id in ids)
+            {
+                result.Add(_userManager.FindByIdAsync(id).Result);
+            }
+            return result;
         }
 
 
+        //Friends list
+        public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)
+        {
+            var users = _context.Users
+                .Where(x => x.Id.Contains(word) && x.Id != userId)
+                .AsEnumerable();
+            return users;
+        }
+
         // SignIn/Out
-        public async Task<bool> SignInUser(ApplicationUser user, string password)
+        public bool SignIn(ApplicationUser user, string password)
         {
 
             if (user == null)
@@ -57,15 +79,15 @@ namespace Communicator.DataProvider.Repositories
 
             if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Failed)
             {
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
+                var result = _signInManager.PasswordSignInAsync(user.UserName, password, false, false).Result;
                 return result.Succeeded;
             }
             return false;
         }
 
-        public async Task SignOutAsync()
+        public void SignOutAsync()
         {
-            await _signInManager.SignOutAsync();
+            _signInManager.SignOutAsync();
         }
 
     }

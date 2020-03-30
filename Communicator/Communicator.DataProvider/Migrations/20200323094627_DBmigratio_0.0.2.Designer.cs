@@ -4,14 +4,16 @@ using Communicator.DataProvider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Communicator.DataProvider.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200323094627_DBmigratio_0.0.2")]
+    partial class DBmigratio_002
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace Communicator.DataProvider.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.ApplicationRole", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -52,7 +54,7 @@ namespace Communicator.DataProvider.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -122,7 +124,7 @@ namespace Communicator.DataProvider.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.ApplicationUserChannel", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUserChannel", b =>
                 {
                     b.Property<int>("ChannelId")
                         .HasColumnType("int");
@@ -137,7 +139,7 @@ namespace Communicator.DataProvider.Migrations
                     b.ToTable("ApplicationUserChannel");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.Channel", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.Channel", b =>
                 {
                     b.Property<int>("ChannelId")
                         .ValueGeneratedOnAdd()
@@ -147,15 +149,12 @@ namespace Communicator.DataProvider.Migrations
                     b.Property<string>("ChannelName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isGroupChannel")
-                        .HasColumnType("bit");
-
                     b.HasKey("ChannelId");
 
                     b.ToTable("Channels");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.Message", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.Message", b =>
                 {
                     b.Property<int>("MessageId")
                         .ValueGeneratedOnAdd()
@@ -287,42 +286,42 @@ namespace Communicator.DataProvider.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUser", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany("Friends")
                         .HasForeignKey("ApplicationUserId");
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.ApplicationUserChannel", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.ApplicationUserChannel", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.Channel", "Channel")
+                    b.HasOne("Communicator.DataProvider.Identity.Channel", "Channel")
                         .WithMany("ApplicationUserChannels")
                         .HasForeignKey("ChannelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", "User")
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", "User")
                         .WithMany("ApplicationUserChannels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Communicator.DataProvider.Models.Message", b =>
+            modelBuilder.Entity("Communicator.DataProvider.Identity.Message", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.Channel", null)
+                    b.HasOne("Communicator.DataProvider.Identity.Channel", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChannelId");
 
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", "Sender")
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationRole", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -331,7 +330,7 @@ namespace Communicator.DataProvider.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -340,7 +339,7 @@ namespace Communicator.DataProvider.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -349,13 +348,13 @@ namespace Communicator.DataProvider.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationRole", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -364,7 +363,7 @@ namespace Communicator.DataProvider.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Communicator.DataProvider.Models.ApplicationUser", null)
+                    b.HasOne("Communicator.DataProvider.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

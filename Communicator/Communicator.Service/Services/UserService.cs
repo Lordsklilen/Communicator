@@ -1,8 +1,9 @@
 ﻿using Communicator.DataProvider.Repositories;
 using Communicator.Service.DTO;
+using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
 using System;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace Communicator.Service.Services
 {
@@ -10,46 +11,43 @@ namespace Communicator.Service.Services
     {
         private readonly RoleRepository _roleRepository;
         private readonly UserRepository _userRepository;
+        private readonly ChannelRepository _channelRepository;
 
-        public UserService(RoleRepository roleRepository, UserRepository userRepository)
+        public UserService(RoleRepository roleRepository, UserRepository userRepository, ChannelRepository channelRepository)
         {
             _roleRepository = roleRepository;
             _userRepository = userRepository;
+            _channelRepository = channelRepository;
         }
-
 
         //USERS
-
-        public async Task<bool> SignOut()
+        public void SignOutAsync()
         {
-            await _userRepository.SignOutAsync();
-            return true;
+            _userRepository.SignOutAsync();
         }
-        public async Task<ResponseCreateUser> CreateUser(RequestCreateUser r)
+
+        public ResponseCreateUser CreateUser(RequestCreateUser r)
         {
             try
             {
-                await _roleRepository.CreateDefaultRoles();
-
-                var isCreated = await _userRepository.CreateUser(r.userName, r.email, r.password);
-
+                _roleRepository.CreateDefaultRoles();
+                var isCreated = _userRepository.Create(r.UserId, r.email, r.password);
                 if (isCreated)
                 {
-                    var user = await GetUser(new RequestGetUser()
+                    var user = GetUser(new RequestGetUser()
                     {
-                        UserName = r.userName
+                        UserId = r.UserId
                     });
                     return new ResponseCreateUser()
                     {
-                        message = $"User \"{r.userName}\" been created succesfully",
+                        message = $"User \"{r.UserId}\" been created succesfully",
                         status = ResponseStatus.Success,
                         User = user.User
-
                     };
                 }
                 return new ResponseCreateUser()
                 {
-                    message = $"User \"{r.userName}\" cannot be created due to unknown problem.",
+                    message = $"User \"{r.UserId}\" cannot be created due to unknown problem.",
                     status = ResponseStatus.Error
                 };
             }
@@ -57,29 +55,30 @@ namespace Communicator.Service.Services
             {
                 return new ResponseCreateUser()
                 {
-                    message = $"User \"{r.userName}\" cannot be created.",
+                    message = $"User \"{r.UserId}\" cannot be created.",
                     exception = ex,
                     status = ResponseStatus.Error
                 };
             }
         }
-        public async Task<ResponseGetUser> GetUser(RequestGetUser request)
+
+        public ResponseGetUser GetUser(RequestGetUser request)
         {
             try
             {
-                var user = await _userRepository.GetUser(request.UserName);
+                var user = _userRepository.GetById(request.UserId);
                 if (user != null)
                 {
                     return new ResponseGetUser()
                     {
-                        message = $"User \"{user.UserName}\" is correct.",
+                        message = $"User \"{user.Id}\" is correct.",
                         status = ResponseStatus.Success,
                         User = user
                     };
                 }
                 return new ResponseGetUser()
                 {
-                    message = $"User \"{request.UserName}\" cannot be get.",
+                    message = $"User \"{request.UserId}\" cannot be get.",
                     status = ResponseStatus.Error
                 };
             }
@@ -87,23 +86,24 @@ namespace Communicator.Service.Services
             {
                 return new ResponseGetUser()
                 {
-                    message = $"User \"{request.UserName}\" cannot be get.",
+                    message = $"User \"{request.UserId}\" cannot be get.",
                     status = ResponseStatus.Error,
                     exception = ex
                 };
             }
         }
-        public async Task<ResponseAuthenticateUser> AuthenticateUser(RequestAuthenticateUser request)
+
+        public ResponseAuthenticateUser AuthenticateUser(RequestAuthenticateUser request)
         {
             try
             {
-                var user = await _userRepository.GetUser(request.userName);
-                var result = await _userRepository.SignInUser(user, request.password);
+                var user = _userRepository.GetById(request.UserId);
+                var result = _userRepository.SignIn(user, request.password);
                 if (result)
                 {
                     return new ResponseAuthenticateUser()
                     {
-                        message = $"User \"{request.userName}\" is authenticated.",
+                        message = $"User \"{request.UserId}\" is authenticated.",
                         status = ResponseStatus.Success,
                         IsSignedIn = result,
                         User = user
@@ -111,7 +111,7 @@ namespace Communicator.Service.Services
                 }
                 return new ResponseAuthenticateUser()
                 {
-                    message = $"User \"{request.userName}\" cannot be authenticated.",
+                    message = $"User \"{request.UserId}\" cannot be authenticated.",
                     status = ResponseStatus.Error
                 };
             }
@@ -119,18 +119,51 @@ namespace Communicator.Service.Services
             {
                 return new ResponseAuthenticateUser()
                 {
-                    message = $"User \"{request.userName}\" cannot be authenticated.",
+                    message = $"User \"{request.UserId}\" cannot be authenticated.",
                     status = ResponseStatus.Error,
                     exception = ex
                 };
             }
         }
-        //ROLES
-        public async Task<ResponseBase> CreateRole(string roleName)
+
+        //Friends List
+        public ResponseGetUsers GetUsersById(RequestGetUsers request)
         {
             try
             {
-                var created = await _roleRepository.CreateRole(roleName);
+                var SearchedFriends = _userRepository.GetUsersById(request.word, request.UserId);
+                if (SearchedFriends != null)
+                {
+                    return new ResponseGetUsers()
+                    {
+                        message = $"Users \"{request.word}\" searched succesfully",
+                        status = ResponseStatus.Success,
+                        SearchedFriends = SearchedFriends.ToArray()
+                    };
+                }
+                return new ResponseGetUsers()
+                {
+                    message = $"Users \"{request.word}\" cannot be found.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseGetUsers()
+                {
+                    message = $"User \"{request.word}\" cannot be found.",
+                    status = ResponseStatus.Error,
+                    exception = ex
+                };
+            }
+        }
+
+        //ROLES
+        public ResponseBase CreateRole(string roleName)
+        {
+            try
+            {
+                var created = _roleRepository.Create(roleName);
                 if (created.Succeeded)
                 {
                     return new ResponseBase()
@@ -156,6 +189,5 @@ namespace Communicator.Service.Services
                 };
             }
         }
-
     }
 }

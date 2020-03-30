@@ -1,7 +1,7 @@
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
-export  class CookiesManager {
+export class CookiesManager {
 
     static AddCookie(key: string, value: string) {
         cookies.set(key,value, { path: '/' });

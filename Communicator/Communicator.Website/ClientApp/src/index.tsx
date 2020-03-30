@@ -20,8 +20,10 @@ const history = createBrowserHistory({ basename: baseUrl });
 const store = configureStore(history);
 
 ReactDOM.render(
+
     <Provider store={store}>
         <ConnectedRouter history={history}>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
                 <Route exact path='/' component={LoginComponent} />
                 <Route exact path='/register' component={RegisterComponent} />
                 <Route exact path='/messages' component={MessagesComponent} />

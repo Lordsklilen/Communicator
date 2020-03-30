@@ -1,17 +1,27 @@
-﻿using Communicator.DataProvider.Identity;
+﻿using Communicator.DataProvider.Models;
+using Communicator.Service.DTO.Base;
 
 namespace Communicator.Service.DTO
 {
     //Requests
-    public class RequestCreateUser
+    public class RequestCreateUser : RequestBase
     {
-        public string userName;
         public string email;
         public string password;
     }
-    public class RequestGetUser
+
+    public class RequestGetUser : RequestBase
     {
-        public string UserName;
+    }
+
+    public class RequestGetUsers : RequestBase
+    {
+        public string word;
+    }
+
+    public class RequestAuthenticateUser : RequestBase
+    {
+        public string password;
     }
 
     //Responses
@@ -19,9 +29,20 @@ namespace Communicator.Service.DTO
     {
         public ApplicationUser User;
     }
+    public class ResponseGetUsers : ResponseBase
+    {
+        public ApplicationUser[] SearchedFriends;
+    }
+
     public class ResponseGetUser : ResponseBase
     {
         public string UserName;
         public ApplicationUser User;
+    }
+
+    public class ResponseAuthenticateUser : ResponseBase
+    {
+        public ApplicationUser User;
+        public bool IsSignedIn;
     }
 }

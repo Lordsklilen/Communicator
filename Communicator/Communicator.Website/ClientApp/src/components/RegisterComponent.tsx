@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Label, FormGroup, Input, Button, Navbar, Container, NavbarBrand, NavbarToggler, Collapse, NavItem, NavLink } from 'reactstrap';
-import { RouteComponentProps, Redirect } from 'react-router';
+import { Label, FormGroup, Input, Navbar, Container, NavbarBrand, NavbarToggler, Collapse, NavItem, NavLink } from 'reactstrap';
+import { RouteComponentProps }  from 'react-router';
 import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 import * as RegisterStore from '../store/Register';
@@ -141,6 +141,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
             isOpen: !this.state.isOpen
         });
     }
+
     //Actions
     RequestCreateUser(userName: string, email: string, password: string) {
 
@@ -148,7 +149,7 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                userName: userName,
+                UserId: userName,
                 email: email,
                 password: password
             })

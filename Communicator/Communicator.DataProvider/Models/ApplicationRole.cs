@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 
-namespace Communicator.DataProvider.Identity
+namespace Communicator.DataProvider.Models
 {
     public class ApplicationRole : IdentityRole
     {
