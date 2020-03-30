@@ -23,7 +23,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
         UserName: "",
-        FriendsList: [],
         Messages: this.props.Messages,
         SearchedFriends: this.props.SearchedFriends,
         IsSignedIn: false,
@@ -36,6 +35,11 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (username === "") {
             this.props.history.push("/");
         }
+        this.setState({
+            Messages: [],
+            Channels: [],
+            SearchedFriends: []
+        })
         this.props.GetUser(username);
         this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
@@ -215,9 +219,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         console.log("clicked friend " + friendName);
         this.props.CreateChannel(this.state.UserName, "channelname", [this.state.UserName, friendName]);
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide");
-        this.setState({
-            FriendsList: []
-        })
     }
 
     private toggle = () => {

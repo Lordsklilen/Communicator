@@ -9,7 +9,6 @@ export interface MessagesState {
     UserName: string;
     IsSignedIn: boolean;
     User: ApplicationUser | null;
-    FriendsList: string[];
     Messages: Message[];
     Channels: Channel[];
     SearchedFriends: ApplicationUser[];
@@ -120,7 +119,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             IsSignedIn: false,
             User: null,
             isOpen: false,
-            FriendsList: [],
             Messages: [],
             Channels: [],
             SearchedFriends: [],
@@ -138,7 +136,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 Messages: state.Messages,
                 Channels: state.Channels,
                 isOpen: state.isOpen,
-                FriendsList: state.FriendsList,
                 SearchedFriends: action.SearchedFriends
             }
         case 'ResponseCreateChannel':
@@ -148,7 +145,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                FriendsList: [],
                 Messages: state.Messages,
                 Channels: action.channels,
                 SearchedFriends: state.SearchedFriends
@@ -160,10 +156,9 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: action.User,
                 isOpen: state.isOpen,
-                FriendsList: state.FriendsList,
                 Messages: state.Messages,
                 Channels: state.Channels,
-                SearchedFriends: state.SearchedFriends
+                SearchedFriends: []
             }
         case 'ResponseGetChannelsForUser':
             console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message + ", with status: " + action.status)
@@ -172,10 +167,9 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                FriendsList: state.FriendsList,
                 Messages: state.Messages,
                 Channels: action.channels,
-                SearchedFriends: state.SearchedFriends
+                SearchedFriends: []
             }
         default:
             return state;
