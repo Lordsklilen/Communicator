@@ -11,6 +11,7 @@ export interface MessagesState {
     User: ApplicationUser | null;
     Messages: Message[];
     Channels: Channel[];
+    Channel: Channel | null;
     SearchedFriends: ApplicationUser[];
     isOpen: boolean
 }
@@ -109,6 +110,27 @@ export const actionCreators = {
                 });
             });
     },
+
+    SelectChannel: (UserId:string,ChannelId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId
+            })
+        };
+        return fetch('/Channel/Api/SelectChannel', requestOptions)
+            .then(response => response.json() as Promise<ResponseSelectChannel>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseSelectChannel',
+                    message: data.message,
+                    status: data.status as Status,
+                    Channel: data.Channel as Channel
+                });
+            });
+    },
 };
 
 // REDUCER
@@ -121,6 +143,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             isOpen: false,
             Messages: [],
             Channels: [],
+            Channel: null,
             SearchedFriends: [],
         };
     }
@@ -135,6 +158,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 User: state.User,
                 Messages: state.Messages,
                 Channels: state.Channels,
+                Channel: state.Channel,
                 isOpen: state.isOpen,
                 SearchedFriends: action.SearchedFriends
             }
@@ -147,6 +171,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 isOpen: state.isOpen,
                 Messages: state.Messages,
                 Channels: action.channels,
+                Channel: state.Channel,
                 SearchedFriends: state.SearchedFriends
             }
         case 'ResponseGetUser':
@@ -158,6 +183,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 isOpen: state.isOpen,
                 Messages: state.Messages,
                 Channels: state.Channels,
+                Channel: state.Channel,
                 SearchedFriends: []
             }
         case 'ResponseGetChannelsForUser':
@@ -169,6 +195,19 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 isOpen: state.isOpen,
                 Messages: state.Messages,
                 Channels: action.channels,
+                Channel: state.Channel,
+                SearchedFriends: []
+            }
+        case 'ResponseSelectChannel':
+            console.log("[ResponseSelectChannel] response recived, with message: " + action.message + ", with status: " + action.status)
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                isOpen: state.isOpen,
+                Messages: state.Messages,
+                Channels: state.Channels,
+                Channel: action.Channel,
                 SearchedFriends: []
             }
         default:
@@ -179,7 +218,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
 
 
 // ACTIONS
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser;
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel;
 export interface ResponseGetSearchUsers {
     type: 'ResponseGetSearchUsers',
     message: string,
@@ -206,4 +245,10 @@ export interface ResponseGetChannelsForUser {
     message: string,
     status: Status,
     channels: Channel[],
+}
+export interface ResponseSelectChannel {
+    type: 'ResponseSelectChannel',
+    message: string,
+    status: Status,
+    Channel: Channel,
 }

@@ -14,6 +14,11 @@ namespace Communicator.Service.DTO
     {
     }
 
+    public class RequestSelectChannel : RequestBase
+    {
+        public int ChannelId;
+    }
+
 
     //Responses
     public class ResponseCreateChannel : ResponseBase
@@ -23,5 +28,9 @@ namespace Communicator.Service.DTO
     public class ResponseGetUserChannels : ResponseBase
     {
         public ICollection<Channel> channels;
+    }
+    public class ResponseSelectChannel : ResponseBase
+    {
+        public Channel Channel;
     }
 }

@@ -42,5 +42,14 @@ namespace Communicator.DataProvider.Repositories
                 .ToList();
             return channels;
         }
+
+        public Channel SelectChannel(int channelId)
+        {
+            var channel = _context.Channels
+                .Include(p => p.ApplicationUserChannels)
+                .Include(p => p.Messages)
+                .First(x => x.ChannelId == channelId);
+            return channel;
+        }
     }
 }

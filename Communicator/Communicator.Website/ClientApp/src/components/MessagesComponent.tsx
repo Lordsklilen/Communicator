@@ -29,6 +29,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         User: null,
         isOpen: false,
         Channels: this.props.Channels,
+        Channel: null,
     };
     componentDidMount() {
         let username = CookiesManager.GetUserName();
@@ -129,7 +130,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             <button className="fa fa-search fa-lg searchSubmit" onClick={this.SearchForFriends.bind(this)} />
                             <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)} />
                         </div>
-                        <div className="SearchedFriends">
+                        <div id="searchFriends" className="SearchedFriends">
                             {this.RenderFriends()}
                         </div>
                     </div>
@@ -159,11 +160,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (this.props.Channels == null || this.props.Channels.length <= 0)
             return "";
         let UserName = this.state.UserName;
+        (document.getElementById("searchFriends") as HTMLDivElement).innerHTML = "";
         return this.props.Channels.map((channel: Channel, i) => {
             let channelname = channel.ChannelName;
             if (!channel.isGroupChannel) {
                 channelname = channel.UserIds.filter(function (id: string) {
-                    return id != UserName;
+                    return id !== UserName;
                 }).pop() as string;
             }
             return (
@@ -193,12 +195,14 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {
-        console.log("Channel selected id: " + event.currentTarget.dataset.channelid);
+        let channelId = Number(event.currentTarget.dataset.channelid);
+        console.log("Channel selected id: " + channelId.toString());
         var elems = document.getElementsByClassName("active_chat");
         [].forEach.call(elems, function (el: HTMLDivElement) {
             el.classList.remove("active_chat");
         });
         event.currentTarget.classList.add("active_chat");
+        this.props.SelectChannel(this.state.UserName,channelId);
     }
 
     ShowSearch(event: React.FormEvent<HTMLInputElement>) {

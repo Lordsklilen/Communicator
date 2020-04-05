@@ -83,8 +83,37 @@ namespace Communicator.Service.Services
             }
         }
 
+        public ResponseSelectChannel SelectChannel(RequestSelectChannel r)
+        {
+            try
+            {
+                var channel = _channelRepository.SelectChannel(r.ChannelId);
 
+                if (channel != null)
+                {
 
-
+                    return new ResponseSelectChannel()
+                    {
+                        message = $"Channels \"{r.UserId}\" get  succesfully",
+                        status = ResponseStatus.Success,
+                        Channel = channel
+                    };
+                }
+                return new ResponseSelectChannel()
+                {
+                    message = $"Cannot get chanenls for user  \"{r.UserId}\" due to unknown problem.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseSelectChannel()
+                {
+                    message = $"Cannot get chanenls for user  \"{r.UserId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
     }
 }
