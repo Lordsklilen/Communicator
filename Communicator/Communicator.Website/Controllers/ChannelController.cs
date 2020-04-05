@@ -45,5 +45,15 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(_channelService.SelectChannel(request));
         }
 
+
+        [HttpPost]
+        [Route("Api/SendMessage")]
+        [Authorize(Roles = "User")]
+        public string SendMessage([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestSendMessage>(json);
+            return PrepareResponse(_channelService.SendMessage(request));
+        }
+
     }
 }

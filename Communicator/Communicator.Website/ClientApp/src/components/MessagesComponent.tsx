@@ -12,6 +12,7 @@ import '../styles/Login.css';
 import '../styles/ChatMessages.css';
 import '../styles/Search.css';
 import { Channel } from '../store/Models/Channel';
+import { Message } from '../store/Models/Message';
 
 
 type MessagesProps =
@@ -110,11 +111,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                             <p>Test which is a new approach to have allsolutions</p>
                                             <span className="time_date"> 11:01 AM    |    June 9</span> </div>
                                     </div>
+                                    {this.RenderMessages()}
                                 </div>
                                 <div className="type_msg">
                                     <div className="input_msg_write">
-                                        <input type="text" className="write_msg" placeholder="Type a message" />
-                                        <button className="msg_send_btn" type="button"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                                        <input id="messageContent" type="text" className="write_msg" placeholder="Type a message" />
+                                        <button className="msg_send_btn" onClick={this.SendMessage.bind(this)} type="button"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -156,6 +158,40 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         })
     }
 
+    RenderMessages() {
+        let channel = this.props.Channel;
+        if (channel === null || channel === undefined) {
+            return;
+        }
+        else {
+
+            let messages = channel.Messages;
+            return messages.map((message: Message, i: number) => {
+                if (message.SenderId == this.state.UserName) {
+                    return (
+                        <div className="outgoing_msg">
+                            <div className="sent_msg">
+                                <p>{message.Content}</p>
+                                <span className="time_date"> 11:01 AM    |    June 9</span> </div>
+                        </div>
+                        )
+                }
+                else {
+                    return (
+                        <div className="incoming_msg">
+                            <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                            <div className="received_msg">
+                                <div className="received_withd_msg">
+                                    <p>{message.Content}</p>
+                                    <span className="time_date"> 11:01 AM    |    June 9</span></div>
+                            </div>
+                        </div>
+                    )
+                }
+            })
+        }
+    }
+
     RenderChannels() {
         if (this.props.Channels == null || this.props.Channels.length <= 0)
             return "";
@@ -182,18 +218,18 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
 
-
     Friends() {
         let friends = this.props.Channels.filter((channel: Channel, i) => {
             return !channel.isGroupChannel;
 
         });
-        return friends.map((friend)  => {
+        return friends.map((friend) => {
             return friend.UserIds.filter((id: string) => {
                 return id != this.state.UserName;
             }).pop() as string;
         });
     }
+
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {
         let channelId = Number(event.currentTarget.dataset.channelid);
         console.log("Channel selected id: " + channelId.toString());
@@ -202,7 +238,18 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             el.classList.remove("active_chat");
         });
         event.currentTarget.classList.add("active_chat");
-        this.props.SelectChannel(this.state.UserName,channelId);
+        this.props.SelectChannel(this.state.UserName, channelId);
+    }
+
+    SendMessage(event: React.FormEvent<HTMLButtonElement>) {
+        if (this.props.Channel === null) {
+            return;
+        }
+        var input = (document.getElementById("messageContent") as HTMLInputElement);
+        console.log("send message" + input.value);
+        this.props.SendMessage(this.state.UserName,this.props.Channel, input.value);
+        //add here message to UI
+        input.value = "";
     }
 
     ShowSearch(event: React.FormEvent<HTMLInputElement>) {

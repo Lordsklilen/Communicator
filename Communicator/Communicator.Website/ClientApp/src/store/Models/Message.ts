@@ -1,5 +1,7 @@
 export class Message {
+    MessageId!: number;
+    SenderId!: string;
     Content!: string;
-    senderId!: string;
+    SentTime!: string;
 }
 

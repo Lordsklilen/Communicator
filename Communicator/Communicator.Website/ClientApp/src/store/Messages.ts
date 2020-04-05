@@ -131,6 +131,19 @@ export const actionCreators = {
                 });
             });
     },
+
+    SendMessage: (UserId:string ,channel:Channel,message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: channel.ChannelId,
+                message: message
+            })
+        };
+        return fetch('/Channel/Api/SendMessage', requestOptions);
+    },
 };
 
 // REDUCER
@@ -246,6 +259,7 @@ export interface ResponseGetChannelsForUser {
     status: Status,
     channels: Channel[],
 }
+
 export interface ResponseSelectChannel {
     type: 'ResponseSelectChannel',
     message: string,

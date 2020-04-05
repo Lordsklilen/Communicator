@@ -7,5 +7,6 @@ namespace Communicator.Service.PublicInterfaces
         ResponseCreateChannel CreateChannel(RequestCreateChannel r);
         ResponseGetUserChannels GetChannelsForUser(RequestGetUserChannels r);
         ResponseSelectChannel SelectChannel(RequestSelectChannel r);
+        ResponseSendMessage SendMessage(RequestSendMessage r);
     }
 }

@@ -19,18 +19,30 @@ namespace Communicator.Service.DTO
         public int ChannelId;
     }
 
+    public class RequestSendMessage : RequestBase
+    {
+        public int ChannelId;
+        public string message;
+    }
+
 
     //Responses
     public class ResponseCreateChannel : ResponseBase
     {
         public ICollection<Channel> channels;
     }
+
     public class ResponseGetUserChannels : ResponseBase
     {
         public ICollection<Channel> channels;
     }
+
     public class ResponseSelectChannel : ResponseBase
     {
         public Channel Channel;
+    }
+
+    public class ResponseSendMessage : ResponseBase
+    {
     }
 }

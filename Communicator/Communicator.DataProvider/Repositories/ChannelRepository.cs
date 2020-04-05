@@ -1,5 +1,6 @@
 ﻿using Communicator.DataProvider.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -50,6 +51,21 @@ namespace Communicator.DataProvider.Repositories
                 .Include(p => p.Messages)
                 .First(x => x.ChannelId == channelId);
             return channel;
+        }
+
+        public void SendMessage(ApplicationUser sender, int ChannelId, string Message)
+        {
+            var channel = _context.Channels
+                .Include(p => p.ApplicationUserChannels)
+                .Include(p => p.Messages)
+                .First(x => x.ChannelId == ChannelId);
+            channel.Messages.Add(new Message()
+            {
+                Content = Message,
+                Sender = sender,
+                SentTime = DateTime.Now
+            });
+            _context.SaveChanges();
         }
     }
 }

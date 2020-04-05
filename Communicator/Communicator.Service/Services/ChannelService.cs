@@ -94,14 +94,14 @@ namespace Communicator.Service.Services
 
                     return new ResponseSelectChannel()
                     {
-                        message = $"Channels \"{r.UserId}\" get  succesfully",
+                        message = $"Channels \"{r.UserId}\" selected succesfully",
                         status = ResponseStatus.Success,
                         Channel = channel
                     };
                 }
                 return new ResponseSelectChannel()
                 {
-                    message = $"Cannot get chanenls for user  \"{r.UserId}\" due to unknown problem.",
+                    message = $"Cannot SelectChannel for user  \"{r.UserId}\" due to unknown problem.",
                     status = ResponseStatus.Error
                 };
             }
@@ -109,7 +109,32 @@ namespace Communicator.Service.Services
             {
                 return new ResponseSelectChannel()
                 {
-                    message = $"Cannot get chanenls for user  \"{r.UserId}\".",
+                    message = $"Cannot SelectChannel for user  \"{r.UserId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
+
+        public ResponseSendMessage SendMessage(RequestSendMessage r)
+        {
+            try
+            {
+                var sender = _userRepository.GetById(r.UserId);
+                _channelRepository.SendMessage(sender, r.ChannelId, r.message);
+
+
+                return new ResponseSendMessage()
+                {
+                    message = $"Message sent from  \"{r.UserId}\"",
+                    status = ResponseStatus.Success,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseSendMessage()
+                {
+                    message = $"Cannot send message for user  \"{r.UserId}\".",
                     exception = ex,
                     status = ResponseStatus.Error
                 };
