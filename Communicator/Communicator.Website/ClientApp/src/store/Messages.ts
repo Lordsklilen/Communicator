@@ -2,14 +2,12 @@ import { Action, Reducer } from 'redux';
 import { Status } from './Models/Status';
 import { ApplicationUser } from './Models/ApplicationUser';
 import { Channel } from './Models/Channel';
-import { Message } from './Models/Message';
 import { AppThunkAction } from '.';
 // STATE
 export interface MessagesState {
     UserName: string;
     IsSignedIn: boolean;
     User: ApplicationUser | null;
-    Messages: Message[];
     Channels: Channel[];
     Channel: Channel | null;
     SearchedFriends: ApplicationUser[];
@@ -154,7 +152,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             IsSignedIn: false,
             User: null,
             isOpen: false,
-            Messages: [],
             Channels: [],
             Channel: null,
             SearchedFriends: [],
@@ -169,7 +166,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                Messages: state.Messages,
                 Channels: state.Channels,
                 Channel: state.Channel,
                 isOpen: state.isOpen,
@@ -182,7 +178,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                Messages: state.Messages,
                 Channels: action.channels,
                 Channel: state.Channel,
                 SearchedFriends: state.SearchedFriends
@@ -194,7 +189,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: action.User,
                 isOpen: state.isOpen,
-                Messages: state.Messages,
                 Channels: state.Channels,
                 Channel: state.Channel,
                 SearchedFriends: []
@@ -206,7 +200,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                Messages: state.Messages,
                 Channels: action.channels,
                 Channel: state.Channel,
                 SearchedFriends: []
@@ -218,7 +211,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 isOpen: state.isOpen,
-                Messages: state.Messages,
                 Channels: state.Channels,
                 Channel: action.Channel,
                 SearchedFriends: []

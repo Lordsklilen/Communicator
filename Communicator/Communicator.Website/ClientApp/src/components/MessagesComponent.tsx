@@ -24,7 +24,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     state: Readonly<MessagesState> = {
         UserName: "",
-        Messages: this.props.Messages,
         SearchedFriends: this.props.SearchedFriends,
         IsSignedIn: false,
         User: null,
@@ -38,7 +37,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             this.props.history.push("/");
         }
         this.setState({
-            Messages: [],
             Channels: [],
             SearchedFriends: []
         })
@@ -97,20 +95,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
                             {/* Right Panel */}
                             <div className="mesgs">
-                                <div className="msg_history">
-                                    <div className="incoming_msg">
-                                        <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
-                                        <div className="received_msg">
-                                            <div className="received_withd_msg">
-                                                <p>Test which is a new approach to have all solutions</p>
-                                                <span className="time_date"> 11:01 AM    |    June 9</span></div>
-                                        </div>
-                                    </div>
-                                    <div className="outgoing_msg">
-                                        <div className="sent_msg">
-                                            <p>Test which is a new approach to have allsolutions</p>
-                                            <span className="time_date"> 11:01 AM    |    June 9</span> </div>
-                                    </div>
+                                <div className="msg_history"> 
                                     {this.RenderMessages()}
                                 </div>
                                 <div className="type_msg">
@@ -140,6 +125,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             </React.Fragment>
         );
     }
+
     RenderFriends() {
         let friends = this.Friends();
         return this.props.SearchedFriends.map((friend: ApplicationUser, i: number) => {
@@ -163,54 +149,55 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (channel === null || channel === undefined) {
             return;
         }
-        else {
-
-            let messages = channel.Messages;
-            return messages.map((message: Message, i: number) => {
-                if (message.SenderId == this.state.UserName) {
-                    return (
-                        <div className="outgoing_msg">
-                            <div className="sent_msg">
-                                <p>{message.Content}</p>
-                                <span className="time_date"> 11:01 AM    |    June 9</span> </div>
-                        </div>
-                        )
-                }
-                else {
-                    return (
-                        <div className="incoming_msg">
-                            <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
-                            <div className="received_msg">
-                                <div className="received_withd_msg">
-                                    <p>{message.Content}</p>
-                                    <span className="time_date"> 11:01 AM    |    June 9</span></div>
-                            </div>
-                        </div>
-                    )
-                }
-            })
+        let messages = channel.Messages;
+        if (messages === null || messages === undefined) {
+            return;
         }
+        return messages.map((message: Message, i: number) => {
+            if (message.UserId === this.state.UserName) {
+                return (
+                    <div className="outgoing_msg" key={message.MessageId}>
+                        <div className="sent_msg">
+                            <p>{message.Content}</p>
+                            <span className="time_date"> 11:01 AM    |    June 9</span> </div>
+                    </div>
+                )
+            }
+            else {
+                return (
+                    <div className="incoming_msg" key={message.MessageId}>
+                        <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="received_msg">
+                            <div className="received_withd_msg">
+                                <p>{message.Content}</p>
+                                <span className="time_date"> 11:01 AM    |    June 9</span></div>
+                        </div>
+                    </div>
+                )
+            }
+        })
+
     }
 
     RenderChannels() {
         if (this.props.Channels == null || this.props.Channels.length <= 0)
             return "";
         let UserName = this.state.UserName;
-        (document.getElementById("searchFriends") as HTMLDivElement).innerHTML = "";
         return this.props.Channels.map((channel: Channel, i) => {
             let channelname = channel.ChannelName;
             if (!channel.isGroupChannel) {
                 channelname = channel.UserIds.filter(function (id: string) {
                     return id !== UserName;
-                }).pop() as string;
+                }).find(x => x) as string;
             }
+            let lastMessage = this.getLastMessage(channel);
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User Image" /> </div>
+                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User {channelname}" /> </div>
                         <div className="chat_ib">
                             <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
-                            <p>Mesage Text</p>
+                            <p>{lastMessage}</p>
                         </div>
                     </div>
                 </div>
@@ -225,9 +212,20 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
         return friends.map((friend) => {
             return friend.UserIds.filter((id: string) => {
-                return id != this.state.UserName;
-            }).pop() as string;
+                return id !== this.state.UserName;
+            }).find(x => x) as string;
         });
+    }
+    getLastMessage(channel: Channel) {
+        if (channel === null || channel === undefined)
+            return "";
+        let messages = channel.Messages;
+        if (messages === null || messages === undefined)
+            return "";
+        let message = messages.find(x => x);
+        if (message === null || message === undefined)
+            return "";
+        return message.Content.substring(0, 30);
     }
 
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {
@@ -247,7 +245,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         }
         var input = (document.getElementById("messageContent") as HTMLInputElement);
         console.log("send message" + input.value);
-        this.props.SendMessage(this.state.UserName,this.props.Channel, input.value);
+        this.props.SendMessage(this.state.UserName, this.props.Channel, input.value);
         //add here message to UI
         input.value = "";
     }

@@ -1,6 +1,6 @@
 export class Message {
     MessageId!: number;
-    SenderId!: string;
+    UserId!: string;
     Content!: string;
     SentTime!: string;
 }
