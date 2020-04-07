@@ -38,16 +38,35 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (username === "") {
             this.props.history.push("/");
         }
-        this.setState({
-            Channel: null,
-            Channels: [],
-            SearchedFriends: []
-        })
         this.props.GetUser(username);
         this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
         this.AddEventListeners();
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+        this.setState({
+            Channel: null,
+            Channels: [],
+            SearchedFriends: []
+        })
+
+    }
+
+    componentDidUpdate(prevProps: MessagesProps, prevState: MessagesState) {
+        if (this.props.ShouldUpdateMessages) {
+            var element = document.getElementById("messagePanel") as HTMLDivElement;
+            if (element !== null) {
+                element.scrollTop = element.scrollHeight;
+            }
+        }
+        if (Array.isArray(this.props.Channels) && this.props.Channels.length && prevProps.Channels.length === 0) {
+            var nodes = document.querySelectorAll('.chat_list');
+            var first = nodes[0];
+            (first as HTMLDivElement).click();
+        }
     }
 
     AddEventListeners() {
@@ -60,22 +79,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
 
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    componentDidUpdate(prevProps: MessagesProps, prevState: MessagesState) {
-        if (this.props.ShouldUpdateMessages) {
-            var element = document.getElementById("messagePanel") as HTMLDivElement;
-            if (element !== null) {
-                element.scrollTop = element.scrollHeight;
-            }
-        }
-    }
-
     UpdateMessages() {
         if (this.props.Channel !== null && this.props.Channel !== undefined) {
-            var date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
+            let date = new Date(0);
+            if (this.props.Channel.Messages.length > 0) {
+                date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
+            }
             this.props.UpdateMessages(this.state.UserName, this.props.Channel.ChannelId, date)
         }
     }
@@ -199,19 +208,19 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                     <div className="outgoing_msg" key={message.MessageId}>
                         <div className="sent_msg">
                             <p>{message.Content}</p>
-                            <span className="time_date"> {hour}:{minutes}    |    {month} {day}</span></div>
+                            <span className="time_date float_right"> {hour}:{minutes}    |    {month} {day}</span></div>
                     </div>
                 )
             }
             else {
-               
+
                 return (
                     <div className="incoming_msg" key={message.MessageId}>
                         <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
                         <div className="received_msg">
                             <div className="received_withd_msg">
                                 <p>{message.Content}</p>
-                                <span className="time_date"> {hour}:{minutes}    |    {month} {day}</span></div>
+                                <span className="time_date float_left"> {hour}:{minutes}    |    {month} {day}</span></div>
                         </div>
                     </div>
                 )
@@ -272,7 +281,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {
         let channelId = Number(event.currentTarget.dataset.channelid);
-        console.log("Channel selected id: " + channelId.toString());
         var elems = document.getElementsByClassName("active_chat");
         [].forEach.call(elems, function (el: HTMLDivElement) {
             el.classList.remove("active_chat");
@@ -286,7 +294,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         var input = (document.getElementById("messageContent") as HTMLInputElement);
-        if (input.value ==="") {
+        if (input.value === "") {
             return;
         }
         this.props.SendMessage(this.state.UserName, this.props.Channel, input.value);

@@ -75,7 +75,12 @@ namespace Communicator.DataProvider.Repositories
                 }).First(x => x.channel.ChannelId == channelId);
 
             var channel = query.channel;
-            channel.Messages = channel.Messages.OrderBy(x => x.SentTime).ToList();
+            if (channel.Messages != null)
+                channel.Messages = channel.Messages.OrderBy(x => x.SentTime).ToList();
+            else
+            {
+                channel.Messages = new List<Message>();
+            }
             return channel;
         }
 

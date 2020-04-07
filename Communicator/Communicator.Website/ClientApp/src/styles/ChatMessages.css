@@ -144,7 +144,14 @@ img {
     color: #747474;
     display: block;
     font-size: 12px;
-    margin: 8px 0 0;
+}
+
+.float_left {
+    float: left;
+}
+
+.float_right {
+    float: right;
 }
 
 .received_withd_msg {
@@ -170,7 +177,7 @@ img {
 
 .outgoing_msg {
     overflow: hidden;
-    margin: 26px 0 26px;
+    margin: 6px 0 6px;
     animation: slide-up 0.4s ease;
 }
 

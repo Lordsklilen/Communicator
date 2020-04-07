@@ -84,10 +84,10 @@ export const actionCreators = {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-            })
+            body: JSON.stringify({})
         };
         fetch('/User/Api/SignOut', requestOptions);
+        dispatch({ type: 'LogOutClean' } as LogOutClean);
     },
 
     GetChannelsForUser: (UserId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -251,8 +251,19 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 ShouldUpdateMessages: action.Messages.length > 0,
                 Channels: state.Channels,
                 Channel: channel,
-                SearchedFriends: []
+                SearchedFriends: state.SearchedFriends
             }
+        case 'LogOutClean':
+            console.log("[LogOutClean]");
+            return {
+                UserName: "",
+                IsSignedIn: false,
+                User: null,
+                ShouldUpdateMessages: false,
+                Channels: [],
+                Channel: null,
+                SearchedFriends: [],
+            };
         default:
             return state;
     }
@@ -261,7 +272,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
 
 
 // ACTIONS
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages;
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages | LogOutClean;
 export interface ResponseGetSearchUsers {
     type: 'ResponseGetSearchUsers',
     message: string,
@@ -302,4 +313,8 @@ export interface ResponseUpdateMessages {
     message: string,
     status: Status,
     Messages: Message[],
+}
+
+export interface LogOutClean {
+    type: 'LogOutClean',
 }
