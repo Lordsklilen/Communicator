@@ -120,6 +120,7 @@ img {
 .incoming_msg_img {
     display: inline-block;
     width: 6%;
+    animation: slide-up 0.4s ease;
 }
 
 .received_msg {
@@ -169,6 +170,7 @@ img {
 .outgoing_msg {
     overflow: hidden;
     margin: 26px 0 26px;
+    animation: slide-up 0.4s ease;
 }
 
 .sent_msg {
@@ -212,3 +214,17 @@ img {
     height: 516px;
     overflow-y: auto;
 }
+
+
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

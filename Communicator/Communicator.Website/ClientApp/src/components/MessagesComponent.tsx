@@ -22,21 +22,24 @@ type MessagesProps =
 
 class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
+    interval = setInterval(x => this.UpdateMessages(), 1000);
     state: Readonly<MessagesState> = {
         UserName: "",
         SearchedFriends: this.props.SearchedFriends,
         IsSignedIn: false,
         User: null,
-        isOpen: false,
+        ShouldUpdateMessages: false,
         Channels: this.props.Channels,
         Channel: null,
     };
+
     componentDidMount() {
         let username = CookiesManager.GetUserName();
         if (username === "") {
             this.props.history.push("/");
         }
         this.setState({
+            Channel: null,
             Channels: [],
             SearchedFriends: []
         })
@@ -44,6 +47,29 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
+
+
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    componentDidUpdate(prevProps: MessagesProps, prevState: MessagesState) {
+        if (this.props.ShouldUpdateMessages) {
+            var element = document.getElementById("messagePanel") as HTMLDivElement;
+            if (element !== null) {
+                element.scrollTop = element.scrollHeight;
+            }
+        }
+    }
+
+    UpdateMessages() {
+        console.log("UpdateMessages");
+        if (this.props.Channel !== null && this.props.Channel !== undefined) {
+            var date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
+            this.props.UpdateMessages(this.state.UserName, this.props.Channel.ChannelId, date)
+        }
     }
 
     public render() {
@@ -53,8 +79,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                     <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
                         <Container>
                             <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
-                            <NavbarToggler onClick={this.toggle} className="mr-2" />
-                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
+                            <NavbarToggler className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
                                         <NavLink className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
@@ -95,7 +121,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
                             {/* Right Panel */}
                             <div className="mesgs">
-                                <div className="msg_history"> 
+                                <div className="msg_history" id="messagePanel">
                                     {this.RenderMessages()}
                                 </div>
                                 <div className="type_msg">
@@ -106,8 +132,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                 </div>
                             </div>
                         </div>
-                    </div></div>
-
+                    </div>
+                </div>
 
                 {/* Search Form */}
                 <div className="form-popupHide" id="SearchDiv">
@@ -216,6 +242,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             }).find(x => x) as string;
         });
     }
+
     getLastMessage(channel: Channel) {
         if (channel === null || channel === undefined)
             return "";
@@ -268,12 +295,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         console.log("clicked friend " + friendName);
         this.props.CreateChannel(this.state.UserName, "channelname", [this.state.UserName, friendName]);
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide");
-    }
-
-    private toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
     }
 
     LogOut(event: React.FormEvent<HTMLInputElement>) {

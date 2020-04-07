@@ -3,6 +3,7 @@ import { Status } from './Models/Status';
 import { ApplicationUser } from './Models/ApplicationUser';
 import { Channel } from './Models/Channel';
 import { AppThunkAction } from '.';
+import { Message } from './Models/Message';
 // STATE
 export interface MessagesState {
     UserName: string;
@@ -11,7 +12,7 @@ export interface MessagesState {
     Channels: Channel[];
     Channel: Channel | null;
     SearchedFriends: ApplicationUser[];
-    isOpen: boolean
+    ShouldUpdateMessages: boolean
 }
 
 // ACTION CREATORS
@@ -142,6 +143,28 @@ export const actionCreators = {
         };
         return fetch('/Channel/Api/SendMessage', requestOptions);
     },
+
+    UpdateMessages: (UserId: string, ChannelId: number, date:Date): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId,
+                Date: date
+            })
+        };
+        return fetch('/Channel/Api/UpdateMessages', requestOptions)
+            .then(response => response.json() as Promise<ResponseUpdateMessages>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseUpdateMessages',
+                    message: data.message,
+                    status: data.status as Status,
+                    Messages: data.Messages as Message[]
+                });
+            });
+    },
 };
 
 // REDUCER
@@ -151,7 +174,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             UserName: "",
             IsSignedIn: false,
             User: null,
-            isOpen: false,
+            ShouldUpdateMessages: false,
             Channels: [],
             Channel: null,
             SearchedFriends: [],
@@ -168,7 +191,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 User: state.User,
                 Channels: state.Channels,
                 Channel: state.Channel,
-                isOpen: state.isOpen,
+                ShouldUpdateMessages: false,
                 SearchedFriends: action.SearchedFriends
             }
         case 'ResponseCreateChannel':
@@ -177,7 +200,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                isOpen: state.isOpen,
+                ShouldUpdateMessages: false,
                 Channels: action.channels,
                 Channel: state.Channel,
                 SearchedFriends: state.SearchedFriends
@@ -188,7 +211,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: action.User,
-                isOpen: state.isOpen,
+                ShouldUpdateMessages: false,
                 Channels: state.Channels,
                 Channel: state.Channel,
                 SearchedFriends: []
@@ -199,7 +222,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                isOpen: state.isOpen,
+                ShouldUpdateMessages: false,
                 Channels: action.channels,
                 Channel: state.Channel,
                 SearchedFriends: []
@@ -210,9 +233,24 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                isOpen: state.isOpen,
+                ShouldUpdateMessages: true,
                 Channels: state.Channels,
                 Channel: action.Channel,
+                SearchedFriends: []
+            }
+        case 'ResponseUpdateMessages':
+            console.log("[ResponseUpdateMessages] response recived, with message: " + action.message + ", with status: " + action.status)
+            let channel = state.Channel;
+            if (channel !== null) {
+                channel.Messages = channel.Messages.concat(action.Messages);
+            }
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                ShouldUpdateMessages: action.Messages.length > 0,
+                Channels: state.Channels,
+                Channel: channel,
                 SearchedFriends: []
             }
         default:
@@ -223,7 +261,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
 
 
 // ACTIONS
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel;
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages;
 export interface ResponseGetSearchUsers {
     type: 'ResponseGetSearchUsers',
     message: string,
@@ -257,4 +295,11 @@ export interface ResponseSelectChannel {
     message: string,
     status: Status,
     Channel: Channel,
+}
+
+export interface ResponseUpdateMessages {
+    type: 'ResponseUpdateMessages',
+    message: string,
+    status: Status,
+    Messages: Message[],
 }

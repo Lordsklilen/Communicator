@@ -55,5 +55,14 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(_channelService.SendMessage(request));
         }
 
+        [HttpPost]
+        [Route("Api/UpdateMessages")]
+        [Authorize(Roles = "User")]
+        public string UpdateMessages([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestUpdateMessages>(json);
+            return PrepareResponse(_channelService.UpdateMessages(request));
+        }
+
     }
 }
