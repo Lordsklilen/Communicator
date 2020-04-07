@@ -148,7 +148,8 @@ img {
 }
 
 .received_withd_msg {
-    width: 57%;
+    max-width: 70%;
+    float: left;
 }
 
 .mesgs {
@@ -175,7 +176,7 @@ img {
 
 .sent_msg {
     float: right;
-    width: 46%;
+    max-width: 70%;
 }
 
 .input_msg_write input {
@@ -184,12 +185,17 @@ img {
     color: #4c4c4c;
     font-size: 15px;
     min-height: 48px;
-    width: 100%;
 }
 
 .type_msg {
     border-top: 1px solid #c4c4c4;
     position: relative;
+}
+.write_msg {
+    height: 100%;
+    width: 100%;
+    resize: none;
+    padding-right:45px;
 }
 
 .msg_send_btn {
@@ -201,8 +207,8 @@ img {
     font-size: 17px;
     height: 33px;
     position: absolute;
-    right: 0;
-    top: 11px;
+    right: 5px;
+    top: 5px;
     width: 33px;
 }
 
@@ -214,6 +220,7 @@ img {
     height: 516px;
     overflow-y: auto;
 }
+
 
 
 @keyframes slide-up {

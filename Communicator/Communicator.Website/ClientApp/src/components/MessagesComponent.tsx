@@ -47,8 +47,17 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
+        this.AddEventListeners();
+    }
 
-
+    AddEventListeners() {
+        var input = document.getElementById("messageContent") as HTMLTextAreaElement;
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13 && !event.shiftKey) {
+                event.preventDefault();
+                (document.getElementById("sendButton") as HTMLButtonElement).click();
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -65,7 +74,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     UpdateMessages() {
-        console.log("UpdateMessages");
         if (this.props.Channel !== null && this.props.Channel !== undefined) {
             var date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
             this.props.UpdateMessages(this.state.UserName, this.props.Channel.ChannelId, date)
@@ -126,8 +134,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                 </div>
                                 <div className="type_msg">
                                     <div className="input_msg_write">
-                                        <input id="messageContent" type="text" className="write_msg" placeholder="Type a message" />
-                                        <button className="msg_send_btn" onClick={this.SendMessage.bind(this)} type="button"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                                        <textarea id="messageContent" className="write_msg" rows={4} placeholder="Type a message" />
+                                        <button id="sendButton" className="msg_send_btn" onClick={this.SendMessage.bind(this)} type="submit"><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -180,23 +188,30 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         return messages.map((message: Message, i: number) => {
+            var date = new Date(message.SentTime);
+            let day = date.getDate();
+            let month = this.monthNames[date.getMonth()];
+            let hour = date.getHours();
+            let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+
             if (message.UserId === this.state.UserName) {
                 return (
                     <div className="outgoing_msg" key={message.MessageId}>
                         <div className="sent_msg">
                             <p>{message.Content}</p>
-                            <span className="time_date"> 11:01 AM    |    June 9</span> </div>
+                            <span className="time_date"> {hour}:{minutes}    |    {month} {day}</span></div>
                     </div>
                 )
             }
             else {
+               
                 return (
                     <div className="incoming_msg" key={message.MessageId}>
                         <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
                         <div className="received_msg">
                             <div className="received_withd_msg">
                                 <p>{message.Content}</p>
-                                <span className="time_date"> 11:01 AM    |    June 9</span></div>
+                                <span className="time_date"> {hour}:{minutes}    |    {month} {day}</span></div>
                         </div>
                     </div>
                 )
@@ -271,7 +286,9 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         var input = (document.getElementById("messageContent") as HTMLInputElement);
-        console.log("send message" + input.value);
+        if (input.value ==="") {
+            return;
+        }
         this.props.SendMessage(this.state.UserName, this.props.Channel, input.value);
         //add here message to UI
         input.value = "";
@@ -303,6 +320,9 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         CookiesManager.FillUserName("");
         this.props.history.push('/');
     }
+
+    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 }
 
 export default connect(
