@@ -1,5 +1,10 @@
 export class Message {
-    Content!: string;
-    senderId!: string;
+    constructor(Content: string) {
+        this.Content = Content;
+    }
+    MessageId!: number;
+    UserId!: string;
+    Content: string;
+    SentTime!: Date;
 }
 

@@ -168,7 +168,7 @@ namespace Communicator.DataProvider.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SenderId")
+                    b.Property<string>("SenderId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SentTime")
@@ -178,7 +178,7 @@ namespace Communicator.DataProvider.Migrations
 
                     b.HasIndex("ChannelId");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("SenderId1");
 
                     b.ToTable("Messages");
                 });
@@ -317,7 +317,7 @@ namespace Communicator.DataProvider.Migrations
 
                     b.HasOne("Communicator.DataProvider.Models.ApplicationUser", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderId");
+                        .HasForeignKey("SenderId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

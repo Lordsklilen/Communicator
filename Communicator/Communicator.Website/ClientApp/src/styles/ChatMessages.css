@@ -120,6 +120,7 @@ img {
 .incoming_msg_img {
     display: inline-block;
     width: 6%;
+    animation: slide-up 0.4s ease;
 }
 
 .received_msg {
@@ -143,11 +144,19 @@ img {
     color: #747474;
     display: block;
     font-size: 12px;
-    margin: 8px 0 0;
+}
+
+.float_left {
+    float: left;
+}
+
+.float_right {
+    float: right;
 }
 
 .received_withd_msg {
-    width: 57%;
+    max-width: 70%;
+    float: left;
 }
 
 .mesgs {
@@ -168,12 +177,13 @@ img {
 
 .outgoing_msg {
     overflow: hidden;
-    margin: 26px 0 26px;
+    margin: 6px 0 6px;
+    animation: slide-up 0.4s ease;
 }
 
 .sent_msg {
     float: right;
-    width: 46%;
+    max-width: 70%;
 }
 
 .input_msg_write input {
@@ -182,12 +192,17 @@ img {
     color: #4c4c4c;
     font-size: 15px;
     min-height: 48px;
-    width: 100%;
 }
 
 .type_msg {
     border-top: 1px solid #c4c4c4;
     position: relative;
+}
+.write_msg {
+    height: 100%;
+    width: 100%;
+    resize: none;
+    padding-right:45px;
 }
 
 .msg_send_btn {
@@ -199,8 +214,8 @@ img {
     font-size: 17px;
     height: 33px;
     position: absolute;
-    right: 0;
-    top: 11px;
+    right: 5px;
+    top: 5px;
     width: 33px;
 }
 
@@ -212,3 +227,38 @@ img {
     height: 516px;
     overflow-y: auto;
 }
+
+.loadPrevious {
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+    background: #ebebeb none repeat scroll 0 0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: black;
+    padding: 5px 10px 5px 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.loadPrevious:hover {
+    margin: 0 auto;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #fff;
+    background: #54C9FF none repeat scroll 0 0;
+}
+
+
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

@@ -2,17 +2,17 @@ import { Action, Reducer } from 'redux';
 import { Status } from './Models/Status';
 import { ApplicationUser } from './Models/ApplicationUser';
 import { Channel } from './Models/Channel';
-import { Message } from './Models/Message';
 import { AppThunkAction } from '.';
+import { Message } from './Models/Message';
 // STATE
 export interface MessagesState {
     UserName: string;
     IsSignedIn: boolean;
     User: ApplicationUser | null;
-    Messages: Message[];
     Channels: Channel[];
+    Channel: Channel | null;
     SearchedFriends: ApplicationUser[];
-    isOpen: boolean
+    ShouldUpdateMessages: boolean
 }
 
 // ACTION CREATORS
@@ -84,10 +84,10 @@ export const actionCreators = {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-            })
+            body: JSON.stringify({})
         };
         fetch('/User/Api/SignOut', requestOptions);
+        dispatch({ type: 'LogOutClean' } as LogOutClean);
     },
 
     GetChannelsForUser: (UserId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -109,6 +109,85 @@ export const actionCreators = {
                 });
             });
     },
+
+    SelectChannel: (UserId:string,ChannelId: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId
+            })
+        };
+        return fetch('/Channel/Api/SelectChannel', requestOptions)
+            .then(response => response.json() as Promise<ResponseSelectChannel>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseSelectChannel',
+                    message: data.message,
+                    status: data.status as Status,
+                    Channel: data.Channel as Channel
+                });
+            });
+    },
+
+    SendMessage: (UserId:string ,channel:Channel,message:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: channel.ChannelId,
+                message: message
+            })
+        };
+        return fetch('/Channel/Api/SendMessage', requestOptions);
+    },
+
+    UpdateMessages: (UserId: string, ChannelId: number, date:Date): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId,
+                Date: date
+            })
+        };
+        return fetch('/Channel/Api/UpdateMessages', requestOptions)
+            .then(response => response.json() as Promise<ResponseUpdateMessages>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseUpdateMessages',
+                    message: data.message,
+                    status: data.status as Status,
+                    Messages: data.Messages as Message[],
+                    Channels: data.Channels as Channel[]
+                });
+            });
+    },
+
+    LoadPrevious: (UserId: string, ChannelId: number, date: Date): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId,
+                Date: date
+            })
+        };
+        return fetch('/Channel/Api/LoadPrevious', requestOptions)
+            .then(response => response.json() as Promise<ResponseLoadPrevious>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseLoadPrevious',
+                    message: data.message,
+                    status: data.status as Status,
+                    Messages: data.Messages as Message[]
+                });
+            });
+    },
 };
 
 // REDUCER
@@ -118,9 +197,9 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             UserName: "",
             IsSignedIn: false,
             User: null,
-            isOpen: false,
-            Messages: [],
+            ShouldUpdateMessages: false,
             Channels: [],
+            Channel: null,
             SearchedFriends: [],
         };
     }
@@ -128,49 +207,101 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'ResponseGetSearchUsers':
-            console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                Messages: state.Messages,
                 Channels: state.Channels,
-                isOpen: state.isOpen,
+                Channel: state.Channel,
+                ShouldUpdateMessages: false,
                 SearchedFriends: action.SearchedFriends
             }
         case 'ResponseCreateChannel':
-            console.log("[ResponseCreateChannel] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseCreateChannel] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                isOpen: state.isOpen,
-                Messages: state.Messages,
+                ShouldUpdateMessages: false,
                 Channels: action.channels,
+                Channel: state.Channel,
                 SearchedFriends: state.SearchedFriends
             }
         case 'ResponseGetUser':
-            console.log("[ResponseGetUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: action.User,
-                isOpen: state.isOpen,
-                Messages: state.Messages,
+                ShouldUpdateMessages: false,
                 Channels: state.Channels,
+                Channel: state.Channel,
                 SearchedFriends: []
             }
         case 'ResponseGetChannelsForUser':
-            console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
-                isOpen: state.isOpen,
-                Messages: state.Messages,
+                ShouldUpdateMessages: false,
                 Channels: action.channels,
+                Channel: state.Channel,
                 SearchedFriends: []
             }
+        case 'ResponseSelectChannel':
+            console.log("[ResponseSelectChannel] response recived, with message: " + action.message)
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                ShouldUpdateMessages: true,
+                Channels: state.Channels,
+                Channel: action.Channel,
+                SearchedFriends: []
+            }
+        case 'ResponseUpdateMessages':
+            //console.log("[ResponseUpdateMessages] response recived, with message: " + action.message)
+            let channel = state.Channel;
+            if (channel !== null) {
+                channel.Messages = channel.Messages.concat(action.Messages);
+            }
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                ShouldUpdateMessages: action.Messages.length > 0,
+                Channels: action.Channels,
+                Channel: channel,
+                SearchedFriends: state.SearchedFriends
+            }
+        case 'ResponseLoadPrevious':
+            console.log("[ResponseLoadPrevious] response recived, with message: " + action.message + ", Loaded: " + action.Messages.length)
+            let channelStates = state.Channel;
+            if (channelStates !== null) {
+                channelStates.Messages = action.Messages.concat(channelStates.Messages);
+            }
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                ShouldUpdateMessages: false,
+                Channels: state.Channels,
+                Channel: channelStates,
+                SearchedFriends: state.SearchedFriends
+            }
+        case 'LogOutClean':
+            console.log("[LogOutClean]");
+            return {
+                UserName: "",
+                IsSignedIn: false,
+                User: null,
+                ShouldUpdateMessages: false,
+                Channels: [],
+                Channel: null,
+                SearchedFriends: [],
+            };
         default:
             return state;
     }
@@ -179,7 +310,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
 
 
 // ACTIONS
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser;
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages | LogOutClean | ResponseLoadPrevious;
 export interface ResponseGetSearchUsers {
     type: 'ResponseGetSearchUsers',
     message: string,
@@ -206,4 +337,30 @@ export interface ResponseGetChannelsForUser {
     message: string,
     status: Status,
     channels: Channel[],
+}
+
+export interface ResponseSelectChannel {
+    type: 'ResponseSelectChannel',
+    message: string,
+    status: Status,
+    Channel: Channel,
+}
+
+export interface ResponseUpdateMessages {
+    type: 'ResponseUpdateMessages',
+    message: string,
+    status: Status,
+    Messages: Message[],
+    Channels: Channel[],
+}
+
+export interface ResponseLoadPrevious {
+    type: 'ResponseLoadPrevious',
+    message: string,
+    status: Status,
+    Messages: Message[],
+}
+
+export interface LogOutClean {
+    type: 'LogOutClean',
 }

@@ -35,5 +35,43 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestGetUserChannels>(json);
             return PrepareResponse(_channelService.GetChannelsForUser(request));
         }
+
+        [HttpPost]
+        [Route("Api/SelectChannel")]
+        [Authorize(Roles = "User")]
+        public string SelectChannel([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestSelectChannel>(json);
+            return PrepareResponse(_channelService.SelectChannel(request));
+        }
+
+
+        [HttpPost]
+        [Route("Api/SendMessage")]
+        [Authorize(Roles = "User")]
+        public string SendMessage([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestSendMessage>(json);
+            return PrepareResponse(_channelService.SendMessage(request));
+        }
+
+        [HttpPost]
+        [Route("Api/UpdateMessages")]
+        [Authorize(Roles = "User")]
+        public string UpdateMessages([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestUpdateMessages>(json);
+            return PrepareResponse(_channelService.UpdateMessages(request));
+        }
+
+        [HttpPost]
+        [Route("Api/LoadPrevious")]
+        [Authorize(Roles = "User")]
+        public string LoadPrevious([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestLoadPrevious>(json);
+            return PrepareResponse(_channelService.LoadPrevious(request));
+        }
+
     }
 }

@@ -30,7 +30,6 @@
         background: #0b7dda;
     }
 
-/* Clear floats */
 .PopupSearch::after {
     content: "";
     clear: both;
@@ -77,9 +76,9 @@
     cursor: pointer;
 }
 
-    .exitSearch :hover {
-        background: #e51400;
-    }
+.exitSearch :hover {
+    background: #e51400;
+}
 .FormBody {
     padding: 50px;
 
@@ -89,4 +88,7 @@
     border: 1px solid grey;
     padding: 4px;
     background: #f1f1f1;
+}
+h4 {
+    margin:0 auto;
 }
