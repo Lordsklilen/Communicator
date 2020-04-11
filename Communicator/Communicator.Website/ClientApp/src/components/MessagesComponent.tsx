@@ -13,7 +13,7 @@ import '../styles/ChatMessages.css';
 import '../styles/Search.css';
 import { Channel } from '../store/Models/Channel';
 import { Message } from '../store/Models/Message';
-
+import Emoji from 'react-emoji-render';
 
 type MessagesProps =
     MessagesState &
@@ -215,8 +215,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 return (
                     <div className="outgoing_msg" key={message.MessageId}>
                         <div className="sent_msg">
-                            <p>{message.Content}</p>
-                            <span className="time_date float_right"> {hour}:{minutes}    |    {month} {day}</span></div>
+                            <p><Emoji text={message.Content} /></p>
+                            <span className="time_date float_right"> {hour}:{minutes}    |    {month} {day} </span></div>
                     </div>
                 )
             }
@@ -227,7 +227,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                         <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
                         <div className="received_msg">
                             <div className="received_withd_msg">
-                                <p>{message.Content}</p>
+                                <p><Emoji text={message.Content} /></p>
                                 <span className="time_date float_left"> {hour}:{minutes}    |    {month} {day}</span></div>
                         </div>
                     </div>
@@ -288,7 +288,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (message === null || message === undefined)
             return new Message("");
         return message
-        //return message.Content.substring(0, 30);
     }
 
     LoadPreviousMessages() {
