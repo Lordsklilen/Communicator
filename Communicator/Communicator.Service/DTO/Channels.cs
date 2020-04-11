@@ -51,5 +51,6 @@ namespace Communicator.Service.DTO
     public class ResponseUpdateMessages : ResponseBase
     {
         public ICollection<Message> Messages;
+        public ICollection<Channel> Channels;
     }
 }

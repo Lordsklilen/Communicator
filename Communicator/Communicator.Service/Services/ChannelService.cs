@@ -146,12 +146,15 @@ namespace Communicator.Service.Services
             try
             {
                 var messages = _channelRepository.SelectMessages(r.ChannelId, r.date);
+                var channels = _channelRepository.GetUserChannels(r.UserId);
 
                 return new ResponseUpdateMessages()
                 {
                     message = $"Message updated from  \"{r.UserId}\", new messages: {messages.Count} ",
                     status = ResponseStatus.Success,
-                    Messages = messages
+                    Messages = messages,
+                    Channels = channels
+
                 };
             }
             catch (Exception ex)

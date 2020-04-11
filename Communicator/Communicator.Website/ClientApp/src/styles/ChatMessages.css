@@ -228,6 +228,25 @@ img {
     overflow-y: auto;
 }
 
+.loadPrevious {
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+    background: #ebebeb none repeat scroll 0 0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: black;
+    padding: 5px 10px 5px 12px;
+    margin-bottom: 10px;
+}
+
+.loadPrevious:hover {
+    margin: 0 auto;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #fff;
+    background: #54C9FF none repeat scroll 0 0;
+}
 
 
 @keyframes slide-up {

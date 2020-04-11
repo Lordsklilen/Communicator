@@ -161,7 +161,8 @@ export const actionCreators = {
                     type: 'ResponseUpdateMessages',
                     message: data.message,
                     status: data.status as Status,
-                    Messages: data.Messages as Message[]
+                    Messages: data.Messages as Message[],
+                    Channels: data.Channels as Channel[]
                 });
             });
     },
@@ -249,7 +250,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: action.Messages.length > 0,
-                Channels: state.Channels,
+                Channels: action.Channels,
                 Channel: channel,
                 SearchedFriends: state.SearchedFriends
             }
@@ -313,6 +314,7 @@ export interface ResponseUpdateMessages {
     message: string,
     status: Status,
     Messages: Message[],
+    Channels: Channel[],
 }
 
 export interface LogOutClean {

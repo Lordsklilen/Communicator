@@ -122,12 +122,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                         <div>
                                             <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
                                         </div>
-                                        <h4>Search</h4>
-                                        <div className="stylish-input-group">
-                                            <span className="input-group-addon">
-                                                <Input type="text"> <i className="fa fa-search" aria-hidden="true"></i> </Input>
-                                            </span>
-                                        </div>
+                                        <h4>Channels</h4>
                                     </div>
                                 </div>
                                 {/* Channel list */}
@@ -139,6 +134,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             {/* Right Panel */}
                             <div className="mesgs">
                                 <div className="msg_history" id="messagePanel">
+                                    {this.RenderPreviousMessages()}
                                     {this.RenderMessages()}
                                 </div>
                                 <div className="type_msg">
@@ -167,6 +163,18 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 </div>
             </React.Fragment>
         );
+    }
+
+    RenderPreviousMessages() {
+        if (this.props.Channel == null || this.props.Channel.Messages == null)
+            return "";
+        else if (this.props.Channel.Messages.length > 19) {
+            return (
+                <div className="loadPrevious">
+                    <span onClick={this.LoadPreviousMessages}>Load previous messages</span>
+                </div>
+            );
+        }
     }
 
     RenderFriends() {
@@ -277,6 +285,11 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (message === null || message === undefined)
             return "";
         return message.Content.substring(0, 30);
+    }
+
+    LoadPreviousMessages() {
+        console.log("load previous");
+
     }
 
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {
