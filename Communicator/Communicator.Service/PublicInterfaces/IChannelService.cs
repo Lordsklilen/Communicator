@@ -9,5 +9,6 @@ namespace Communicator.Service.PublicInterfaces
         ResponseSelectChannel SelectChannel(RequestSelectChannel r);
         ResponseSendMessage SendMessage(RequestSendMessage r);
         ResponseUpdateMessages UpdateMessages(RequestUpdateMessages r);
+        ResponseLoadPrevious LoadPrevious(RequestLoadPrevious r);
     }
 }

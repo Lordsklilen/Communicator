@@ -167,5 +167,30 @@ namespace Communicator.Service.Services
                 };
             }
         }
+
+        public ResponseLoadPrevious LoadPrevious(RequestLoadPrevious r)
+        {
+            try
+            {
+                var messages = _channelRepository.SelectPreviousMessages(r.ChannelId, r.date);
+
+                return new ResponseLoadPrevious()
+                {
+                    message = $"Message updated from  \"{r.UserId}\", new messages: {messages.Count} ",
+                    status = ResponseStatus.Success,
+                    Messages = messages
+
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseLoadPrevious()
+                {
+                    message = $"Cannot get new messages from channel \"{r.ChannelId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
     }
 }

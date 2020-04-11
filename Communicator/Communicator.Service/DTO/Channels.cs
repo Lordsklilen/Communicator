@@ -29,6 +29,11 @@ namespace Communicator.Service.DTO
         public int ChannelId;
         public DateTime date;
     }
+    public class RequestLoadPrevious : RequestBase
+    {
+        public int ChannelId;
+        public DateTime date;
+    }
 
 
     //Responses
@@ -52,5 +57,9 @@ namespace Communicator.Service.DTO
     {
         public ICollection<Message> Messages;
         public ICollection<Channel> Channels;
+    }
+    public class ResponseLoadPrevious : ResponseBase
+    {
+        public ICollection<Message> Messages;
     }
 }

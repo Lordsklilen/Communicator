@@ -170,8 +170,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return "";
         else if (this.props.Channel.Messages.length > 19) {
             return (
-                <div className="loadPrevious">
-                    <span onClick={this.LoadPreviousMessages}>Load previous messages</span>
+                <div className="loadPrevious" onClick={this.LoadPreviousMessages.bind(this)}>
+                    <span>Load previous messages</span>
                 </div>
             );
         }
@@ -288,8 +288,13 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     LoadPreviousMessages() {
-        console.log("load previous");
-
+        if (this.props.Channel !== null && this.props.Channel !== undefined) {
+            if (this.props.Channel.Messages.length > 0) {
+                var date = this.props.Channel.Messages[0].SentTime;
+                this.props.LoadPrevious(this.state.UserName, this.props.Channel.ChannelId, date)
+            }
+            
+        }
     }
 
     SelectChannel(event: React.FormEvent<HTMLDivElement>) {

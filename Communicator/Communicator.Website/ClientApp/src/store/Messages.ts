@@ -166,6 +166,28 @@ export const actionCreators = {
                 });
             });
     },
+
+    LoadPrevious: (UserId: string, ChannelId: number, date: Date): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: ChannelId,
+                Date: date
+            })
+        };
+        return fetch('/Channel/Api/LoadPrevious', requestOptions)
+            .then(response => response.json() as Promise<ResponseLoadPrevious>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseLoadPrevious',
+                    message: data.message,
+                    status: data.status as Status,
+                    Messages: data.Messages as Message[]
+                });
+            });
+    },
 };
 
 // REDUCER
@@ -185,7 +207,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'ResponseGetSearchUsers':
-            console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -196,7 +218,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: action.SearchedFriends
             }
         case 'ResponseCreateChannel':
-            console.log("[ResponseCreateChannel] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseCreateChannel] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -207,7 +229,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: state.SearchedFriends
             }
         case 'ResponseGetUser':
-            console.log("[ResponseGetUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -218,7 +240,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: []
             }
         case 'ResponseGetChannelsForUser':
-            console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -229,7 +251,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: []
             }
         case 'ResponseSelectChannel':
-            console.log("[ResponseSelectChannel] response recived, with message: " + action.message + ", with status: " + action.status)
+            console.log("[ResponseSelectChannel] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
                 IsSignedIn: state.IsSignedIn,
@@ -240,7 +262,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: []
             }
         case 'ResponseUpdateMessages':
-            console.log("[ResponseUpdateMessages] response recived, with message: " + action.message + ", with status: " + action.status)
+            //console.log("[ResponseUpdateMessages] response recived, with message: " + action.message)
             let channel = state.Channel;
             if (channel !== null) {
                 channel.Messages = channel.Messages.concat(action.Messages);
@@ -252,6 +274,21 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 ShouldUpdateMessages: action.Messages.length > 0,
                 Channels: action.Channels,
                 Channel: channel,
+                SearchedFriends: state.SearchedFriends
+            }
+        case 'ResponseLoadPrevious':
+            console.log("[ResponseLoadPrevious] response recived, with message: " + action.message + ", Loaded: " + action.Messages.length)
+            let channelStates = state.Channel;
+            if (channelStates !== null) {
+                channelStates.Messages = action.Messages.concat(channelStates.Messages);
+            }
+            return {
+                UserName: state.UserName,
+                IsSignedIn: state.IsSignedIn,
+                User: state.User,
+                ShouldUpdateMessages: false,
+                Channels: state.Channels,
+                Channel: channelStates,
                 SearchedFriends: state.SearchedFriends
             }
         case 'LogOutClean':
@@ -273,7 +310,7 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
 
 
 // ACTIONS
-export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages | LogOutClean;
+export type KnownAction = ResponseGetSearchUsers | ResponseCreateChannel | ResponseGetUser | ResponseGetChannelsForUser | ResponseSelectChannel | ResponseUpdateMessages | LogOutClean | ResponseLoadPrevious;
 export interface ResponseGetSearchUsers {
     type: 'ResponseGetSearchUsers',
     message: string,
@@ -315,6 +352,13 @@ export interface ResponseUpdateMessages {
     status: Status,
     Messages: Message[],
     Channels: Channel[],
+}
+
+export interface ResponseLoadPrevious {
+    type: 'ResponseLoadPrevious',
+    message: string,
+    status: Status,
+    Messages: Message[],
 }
 
 export interface LogOutClean {

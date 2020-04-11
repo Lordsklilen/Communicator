@@ -98,7 +98,7 @@ namespace Communicator.DataProvider.Repositories
                     })
                     .Where(x => x.Message.SentTime > from)
                     .OrderBy(x => x.Message.SentTime)
-                        .ToList()
+                    .ToList()
                 }).First(x => x.channel.ChannelId == channelId);
 
             var messages = query.channel.Messages ?? new List<Message>();
@@ -120,6 +120,30 @@ namespace Communicator.DataProvider.Repositories
             });
             _context.SaveChanges();
         }
+
+        public ICollection<Message> SelectPreviousMessages(int channelId, DateTime from)
+        {
+            var query = _context.Channels
+                .Include(x => x.ApplicationUserChannels)
+                .Select(c => new
+                {
+                    channel = c,
+                    Messages = c.Messages.Select(m => new
+                    {
+                        Message = m,
+                        Sender = m.Sender
+                    })
+                    .Where(x => x.Message.SentTime < from)
+                    .OrderByDescending(x => x.Message.SentTime)
+                    .Take(20)
+                    .ToList()
+                }).First(x => x.channel.ChannelId == channelId);
+
+            var messages = query.channel.Messages ?? new List<Message>();
+            messages = messages.Reverse().ToArray();
+            return messages;
+        }
+
 
     }
 }
