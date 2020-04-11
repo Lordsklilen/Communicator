@@ -249,13 +249,16 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 }).find(x => x) as string;
             }
             let lastMessage = this.getLastMessage(channel);
+            var messagePeak = "";
+            if (lastMessage.UserId !== undefined)
+                messagePeak = lastMessage.UserId + ": " + lastMessage.Content.substring(0, 30);
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
                         <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User {channelname}" /> </div>
                         <div className="chat_ib">
                             <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
-                            <p>{lastMessage}</p>
+                            <p>{messagePeak}</p>
                         </div>
                     </div>
                 </div>
@@ -275,16 +278,17 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
 
-    getLastMessage(channel: Channel) {
+    getLastMessage(channel: Channel): Message{
         if (channel === null || channel === undefined)
-            return "";
+            return new Message("");
         let messages = channel.Messages;
         if (messages === null || messages === undefined)
-            return "";
+            return new Message("");
         let message = messages.find(x => x);
         if (message === null || message === undefined)
-            return "";
-        return message.Content.substring(0, 30);
+            return new Message("");
+        return message
+        //return message.Content.substring(0, 30);
     }
 
     LoadPreviousMessages() {
@@ -293,7 +297,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 var date = this.props.Channel.Messages[0].SentTime;
                 this.props.LoadPrevious(this.state.UserName, this.props.Channel.ChannelId, date)
             }
-            
+
         }
     }
 
