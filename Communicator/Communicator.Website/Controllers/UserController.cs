@@ -3,6 +3,7 @@ using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Communicator.Website.Controllers
 {
@@ -60,15 +61,6 @@ namespace Communicator.Website.Controllers
         }
 
         [HttpPost]
-        [Route("Api/UpdateUser")]
-        [Authorize(Roles = "User")]
-        public string UpdateUser([FromBody] JsonElement json)
-        {
-            var request = ToObject<RequestUpdateUser>(json);
-            return PrepareResponse(_userService.UpdateUser(request));
-        }
-
-        [HttpPost]
         [Route("Api/SignOut")]
         [Authorize(Roles = "User")]
         public string SignOut()
@@ -84,6 +76,22 @@ namespace Communicator.Website.Controllers
         {
             var request = ToObject<RequestGetUsers>(json);
             return PrepareResponse(_userService.GetUsersById(request));
+        }
+
+        //Form Request
+        [HttpPost]
+        [Route("Api/UpdateUser")]
+        [Authorize(Roles = "User")]
+        public string UpdateUser([FromForm]RequestUpdateUser requestUpdateUser)
+        {
+            return PrepareResponse(_userService.UpdateUser(requestUpdateUser));
+        }
+
+        [HttpGet]
+        [Route("GetImage/{UserId}")]
+        public async Task<IActionResult> GetImage(string UserId)
+        {
+            return PhysicalFile(_userService.GetProfileImage(UserId), "image/jpeg");
         }
 
     }

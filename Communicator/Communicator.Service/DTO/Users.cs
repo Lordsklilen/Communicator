@@ -1,5 +1,6 @@
 ﻿using Communicator.DataProvider.Models;
 using Communicator.Service.DTO.Base;
+using Microsoft.AspNetCore.Http;
 
 namespace Communicator.Service.DTO
 {
@@ -14,11 +15,13 @@ namespace Communicator.Service.DTO
     {
     }
 
-    public class RequestUpdateUser : RequestBase
+    public class RequestUpdateUser
     {
-        public string Email;
-        public string OldPassword;
-        public string NewPassword;
+        public IFormFile File { get; set; }
+        public string UserId { get; set; }
+        public string Email { get; set; }
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
     }
 
     public class RequestGetUsers : RequestBase

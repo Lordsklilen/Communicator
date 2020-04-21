@@ -98,10 +98,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/Settings">Hello {this.state.UserName}
+                                            <img className="profilImage" src={"/User/GetImage/" + this.state.UserName} alt="Profile" />
+                                        </NavLink>
                                     </NavItem>
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
+                                        <NavLink tag={Link} className="text-dark LogOut" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
                                     </NavItem>
                                 </ul>
                             </Collapse>
@@ -181,7 +183,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return (
                 <div className="chat_list" key={i.toString()} data-friendusername={friend.UserName} onClick={this.ChooseNewFriend.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friend.UserName} alt="sunil" /> </div>
                         <div className="chat_ib">
                             <h4>{friend.UserName}</h4>
                         </div>
@@ -220,7 +222,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
                 return (
                     <div className="incoming_msg" key={message.MessageId}>
-                        <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="incoming_msg_img"> <img src={"/User/GetImage/" + message.UserId} alt="Profile" /> </div>
                         <div className="received_msg">
                             <div className="received_withd_msg">
                                 <p><Emoji text={message.Content} /></p>
@@ -251,10 +253,10 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User {channelname}" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + channelname} alt="User {channelname}" /> </div>
                         <div className="chat_ib">
                             <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
-                            <p>{messagePeak}</p>
+                            <p><Emoji text={messagePeak} /></p>
                         </div>
                     </div>
                 </div>
@@ -315,7 +317,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         this.props.SendMessage(this.state.UserName, this.props.Channel, input.value);
-        //add here message to UI
         input.value = "";
     }
 

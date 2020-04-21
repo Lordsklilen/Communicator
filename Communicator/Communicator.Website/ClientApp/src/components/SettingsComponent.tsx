@@ -53,10 +53,12 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/messages">Hello {this.state.UserName}</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/messages">Hello {this.state.UserName}
+                                            <img className="profilImage" src={"/User/GetImage/" + this.state.UserName} alt="Profile" />
+                                        </NavLink>
                                     </NavItem>
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
+                                        <NavLink tag={Link} className="text-dark LogOut" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
                                     </NavItem>
                                 </ul>
                             </Collapse>
@@ -75,6 +77,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                                 id="registerUserName"
                                 type="text"
                                 value={this.state.UserName}
+                                name="UserId"
                                 disabled={true}
                             />
                         </FormGroup>
@@ -85,19 +88,32 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                                 autoFocus
                                 id="updateEmail"
                                 type="email"
+                                name="Email"
                                 placeholder={Email}
+                            />
+                        </FormGroup>
+                        <img className="bigProfilImage" src={"/User/GetImage/" + this.state.UserName} alt="Profile" />
+                        <FormGroup>
+                            <Label>Current Profile Image</Label>
+                            <Input
+                                autoFocus
+                                id="uploadImage"
+                                type="file"
+                                name="Image"
                             />
                         </FormGroup>
                         <FormGroup>
                             <Label>Old Password</Label>
                             <Input
                                 id="oldPassword"
+                                name="OldPassword"
                                 type="password" />
                         </FormGroup>
                         <FormGroup>
                             <Label>New Password</Label>
                             <Input
                                 id="newPassword"
+                                name="NewPassword"
                                 type="password" />
                         </FormGroup>
                         <FormGroup>
@@ -110,6 +126,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                         <Label className="errorField">{this.state.errorMessage}</Label>
                         <Label className="ConfirmationField">{this.props.ConfirmationField}</Label>
                         <Input type="button" onClick={this.UpdateUser.bind(this)} value="Update User" />
+
                     </div>
                 </div>
             </React.Fragment>
@@ -139,7 +156,18 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         this.setState({
             errorMessage: "",
         })
-        this.props.UpdateUser(this.state.UserName, email, oldpassword, newPassword);
+
+        var inputFile = (document.getElementById("uploadImage") as HTMLInputElement)
+        const formData = new FormData();
+        formData.set('UserId', this.state.UserName);
+        formData.set('Email', email);
+        formData.set('OldPassword', oldpassword);
+        formData.set('NewPassword', newPassword);
+        if (inputFile != null) {
+            let files = inputFile.files as FileList;
+            formData.set('File', files[0]);
+        }
+        this.props.UpdateUser(formData);
     }
 }
 

@@ -11,13 +11,13 @@ namespace Communicator.Service.Services
     {
         private readonly RoleRepository _roleRepository;
         private readonly UserRepository _userRepository;
-        private readonly ChannelRepository _channelRepository;
+        private readonly FileRepository _fileRepository;
 
-        public UserService(RoleRepository roleRepository, UserRepository userRepository, ChannelRepository channelRepository)
+        public UserService(RoleRepository roleRepository, UserRepository userRepository, FileRepository fileRepository)
         {
             _roleRepository = roleRepository;
             _userRepository = userRepository;
-            _channelRepository = channelRepository;
+            _fileRepository = fileRepository;
         }
 
         //USERS
@@ -199,6 +199,7 @@ namespace Communicator.Service.Services
                 if (correctPassword)
                 {
                     user = _userRepository.Update(user, r.Email, r.NewPassword);
+                    _fileRepository.SaveImage(r.File, r.UserId);
                     return new ResponseUpdateUser()
                     {
                         message = $"User \"{user.Id}\" is updated.",
@@ -219,6 +220,11 @@ namespace Communicator.Service.Services
                     exception = ex
                 };
             }
+        }
+
+        public string GetProfileImage(string UserId)
+        {
+            return _fileRepository.GetProfileImage(UserId);
         }
     }
 }

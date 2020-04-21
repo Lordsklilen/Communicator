@@ -82,6 +82,7 @@ namespace Communicator.Website
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IChannelService, ChannelService>();
             services.AddTransient<RoleRepository>();
+            services.AddTransient<FileRepository>();
             services.AddTransient<ChannelRepository>();
             services.AddTransient<UserRepository>();
             services.AddTransient<UserManager<ApplicationUser>>();

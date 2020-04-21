@@ -12,5 +12,6 @@ namespace Communicator.Service.PublicInterfaces
         ResponseUpdateUser UpdateUser(RequestUpdateUser request);
         void SignOutAsync();
         ResponseGetUsers GetUsersById(RequestGetUsers request);
+        string GetProfileImage(string UserId);
     }
 }

@@ -46,7 +46,7 @@ namespace Communicator.DataProvider.Repositories
         public ApplicationUser Update(ApplicationUser user, string email, string newPassword = "")
         {
             user.Email = email;
-            if (newPassword != "")
+            if (newPassword != "" && newPassword != null)
             {
                 user.PasswordHash = hasher.HashPassword(user, newPassword);
             }

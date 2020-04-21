@@ -44,16 +44,11 @@ export const actionCreators = {
                 });
             });
     },
-    UpdateUser: (UserId: string, email: string, oldpassword: string, newPassword: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    UpdateUser: (formData: FormData): AppThunkAction<KnownAction> => (dispatch, getState) => {
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                UserId: UserId,
-                Email: email,
-                OldPassword: oldpassword,
-                NewPassword: newPassword
-            })
+            body: formData
+            
         };
         return fetch('/User/Api/UpdateUser', requestOptions)
             .then(response => response.json() as Promise<ResponseUpdateUser>)
