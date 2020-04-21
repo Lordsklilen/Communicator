@@ -26,7 +26,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     state: Readonly<MessagesState> = {
         UserName: "",
         SearchedFriends: this.props.SearchedFriends,
-        IsSignedIn: false,
         User: null,
         ShouldUpdateMessages: false,
         Channels: this.props.Channels,
@@ -52,7 +51,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             Channels: [],
             SearchedFriends: []
         })
-
     }
 
     componentDidUpdate(prevProps: MessagesProps, prevState: MessagesState) {
@@ -95,12 +93,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 <header>
                     <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
                         <Container>
-                            <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
+                            <NavbarBrand tag={Link} to="/Settings">Communicator</NavbarBrand>
                             <NavbarToggler className="mr-2" />
                             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
-                                        <NavLink className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
@@ -119,9 +117,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                 <div className="headind_srch">
                                     <div className="recent_heading">
                                         <h4>Friends</h4>
-                                        <div>
-                                            <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
-                                        </div>
+                                        <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
                                         <h4>Channels</h4>
                                     </div>
                                 </div>
@@ -278,7 +274,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
 
-    getLastMessage(channel: Channel): Message{
+    getLastMessage(channel: Channel): Message {
         if (channel === null || channel === undefined)
             return new Message("");
         let messages = channel.Messages;

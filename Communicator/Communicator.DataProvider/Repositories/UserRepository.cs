@@ -43,6 +43,17 @@ namespace Communicator.DataProvider.Repositories
             return res;
         }
 
+        public ApplicationUser Update(ApplicationUser user, string email, string newPassword = "")
+        {
+            user.Email = email;
+            if (newPassword != "")
+            {
+                user.PasswordHash = hasher.HashPassword(user, newPassword);
+            }
+            _userManager.UpdateAsync(user).Wait();
+            return user;
+        }
+
         public ApplicationUser GetById(string id)
         {
             return _userManager.FindByIdAsync(id).Result;
@@ -84,6 +95,22 @@ namespace Communicator.DataProvider.Repositories
             }
             return false;
         }
+
+        public bool CheckPassword(ApplicationUser user, string password)
+        {
+
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
+
+            if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Failed)
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         public void SignOutAsync()
         {

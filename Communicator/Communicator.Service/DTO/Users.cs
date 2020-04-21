@@ -14,6 +14,13 @@ namespace Communicator.Service.DTO
     {
     }
 
+    public class RequestUpdateUser : RequestBase
+    {
+        public string Email;
+        public string OldPassword;
+        public string NewPassword;
+    }
+
     public class RequestGetUsers : RequestBase
     {
         public string word;
@@ -37,6 +44,11 @@ namespace Communicator.Service.DTO
     public class ResponseGetUser : ResponseBase
     {
         public string UserName;
+        public ApplicationUser User;
+    }
+
+    public class ResponseUpdateUser : ResponseBase
+    {
         public ApplicationUser User;
     }
 

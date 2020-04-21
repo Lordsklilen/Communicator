@@ -189,5 +189,36 @@ namespace Communicator.Service.Services
                 };
             }
         }
+
+        public ResponseUpdateUser UpdateUser(RequestUpdateUser r)
+        {
+            try
+            {
+                var user = _userRepository.GetById(r.UserId);
+                var correctPassword = _userRepository.CheckPassword(user, r.OldPassword);
+                if (correctPassword)
+                {
+                    user = _userRepository.Update(user, r.Email, r.NewPassword);
+                    return new ResponseUpdateUser()
+                    {
+                        message = $"User \"{user.Id}\" is updated.",
+                        status = ResponseStatus.Success,
+                        User = user
+                    };
+                }
+                throw new Exception("Password is not correct");
+
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponseUpdateUser()
+                {
+                    message = $"User \"{r.UserId}\" cannot be updated.",
+                    status = ResponseStatus.Error,
+                    exception = ex
+                };
+            }
+        }
     }
 }

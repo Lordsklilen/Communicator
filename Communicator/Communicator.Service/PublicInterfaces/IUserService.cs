@@ -9,6 +9,7 @@ namespace Communicator.Service.PublicInterfaces
         ResponseCreateUser CreateUser(RequestCreateUser request);
         ResponseBase CreateRole(string roleName);
         ResponseGetUser GetUser(RequestGetUser request);
+        ResponseUpdateUser UpdateUser(RequestUpdateUser request);
         void SignOutAsync();
         ResponseGetUsers GetUsersById(RequestGetUsers request);
     }

@@ -42,8 +42,7 @@ img {
     overflow: hidden;
     border-bottom: 1px solid #c4c4c4;
 }
-
-.recent_heading h4 {
+h4 {
     color: #05728f;
     font-size: 21px;
     margin: auto;

@@ -60,6 +60,15 @@ namespace Communicator.Website.Controllers
         }
 
         [HttpPost]
+        [Route("Api/UpdateUser")]
+        [Authorize(Roles = "User")]
+        public string UpdateUser([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestUpdateUser>(json);
+            return PrepareResponse(_userService.UpdateUser(request));
+        }
+
+        [HttpPost]
         [Route("Api/SignOut")]
         [Authorize(Roles = "User")]
         public string SignOut()

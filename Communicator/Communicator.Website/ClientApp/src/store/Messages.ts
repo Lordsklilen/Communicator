@@ -7,7 +7,6 @@ import { Message } from './Models/Message';
 // STATE
 export interface MessagesState {
     UserName: string;
-    IsSignedIn: boolean;
     User: ApplicationUser | null;
     Channels: Channel[];
     Channel: Channel | null;
@@ -195,7 +194,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
     if (state === undefined) {
         return {
             UserName: "",
-            IsSignedIn: false,
             User: null,
             ShouldUpdateMessages: false,
             Channels: [],
@@ -210,7 +208,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[ResponseGetSearchUsers] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 Channels: state.Channels,
                 Channel: state.Channel,
@@ -221,7 +218,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[ResponseCreateChannel] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: false,
                 Channels: action.channels,
@@ -232,7 +228,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[ResponseGetUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: action.User,
                 ShouldUpdateMessages: false,
                 Channels: state.Channels,
@@ -243,7 +238,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[ResponseGetChannelsForUser] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: false,
                 Channels: action.channels,
@@ -254,7 +248,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[ResponseSelectChannel] response recived, with message: " + action.message)
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: true,
                 Channels: state.Channels,
@@ -262,14 +255,12 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
                 SearchedFriends: []
             }
         case 'ResponseUpdateMessages':
-            //console.log("[ResponseUpdateMessages] response recived, with message: " + action.message)
             let channel = state.Channel;
             if (channel !== null) {
                 channel.Messages = channel.Messages.concat(action.Messages);
             }
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: action.Messages.length > 0,
                 Channels: action.Channels,
@@ -284,7 +275,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             }
             return {
                 UserName: state.UserName,
-                IsSignedIn: state.IsSignedIn,
                 User: state.User,
                 ShouldUpdateMessages: false,
                 Channels: state.Channels,
@@ -295,7 +285,6 @@ export const reducer: Reducer<MessagesState> = (state: MessagesState | undefined
             console.log("[LogOutClean]");
             return {
                 UserName: "",
-                IsSignedIn: false,
                 User: null,
                 ShouldUpdateMessages: false,
                 Channels: [],
