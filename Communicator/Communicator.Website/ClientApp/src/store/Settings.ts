@@ -85,6 +85,26 @@ export const actionCreators = {
                 });
             });
     },
+    DeleteChannel: (UserId: string, channelId:string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                UserId: UserId,
+                ChannelId: channelId,
+            })
+        };
+        return fetch('/Channel/Api/DeleteChannel', requestOptions)
+            .then(response => response.json() as Promise<ResponseDeleteChannel>)
+            .then(data => {
+                dispatch({
+                    type: 'ResponseDeleteChannel',
+                    message: data.message,
+                    status: data.status as Status,
+                    Channels: data.Channels as Channel[]
+                });
+            });
+    },
 
 
 };
@@ -145,6 +165,15 @@ export const reducer: Reducer<SettingsState> = (state: SettingsState | undefined
                 ConfirmationField: "",
                 Channels: action.channels,
             }
+        case 'ResponseDeleteChannel':
+            console.log("[ResponseDeleteChannel] response recived, with message: " + action.message)
+            return {
+                UserName: state.UserName,
+                User: state.User,
+                errorMessage: "",
+                ConfirmationField: "",
+                Channels: action.Channels,
+            }
         default:
             return state;
     }
@@ -153,10 +182,17 @@ export const reducer: Reducer<SettingsState> = (state: SettingsState | undefined
 
 
 // ACTIONS
-export type KnownAction = LogOutClean | ResponseGetUser | ResponseUpdateUser | ResponseGetChannelsForUser;
+export type KnownAction = LogOutClean | ResponseGetUser | ResponseUpdateUser | ResponseGetChannelsForUser | ResponseDeleteChannel;
 export interface ResponseUpdateUser{
     type: 'ResponseUpdateUser',
     message: string,
     status: Status,
     User: ApplicationUser,
+}
+
+export interface ResponseDeleteChannel {
+    type: 'ResponseDeleteChannel',
+    message: string,
+    status: Status,
+    Channels: Channel[],
 }

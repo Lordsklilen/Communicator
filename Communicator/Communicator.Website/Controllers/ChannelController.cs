@@ -73,5 +73,14 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(_channelService.LoadPrevious(request));
         }
 
+        [HttpPost]
+        [Route("Api/DeleteChannel")]
+        [Authorize(Roles = "User")]
+        public string DeleteChannel([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestDeleteChannel>(json);
+            return PrepareResponse(_channelService.DeleteChannel(request));
+        }
+
     }
 }

@@ -34,6 +34,10 @@ namespace Communicator.Service.DTO
         public int ChannelId;
         public DateTime date;
     }
+    public class RequestDeleteChannel : RequestBase
+    {
+        public int ChannelId;
+    }
 
 
     //Responses
@@ -61,5 +65,9 @@ namespace Communicator.Service.DTO
     public class ResponseLoadPrevious : ResponseBase
     {
         public ICollection<Message> Messages;
+    }
+    public class ResponsDeleteChannel : ResponseBase
+    {
+        public ICollection<Channel> Channels;
     }
 }

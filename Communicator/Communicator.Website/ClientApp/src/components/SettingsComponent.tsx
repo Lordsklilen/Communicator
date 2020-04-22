@@ -142,8 +142,9 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
     }
 
     DeleteChannel(event: React.FormEvent<HTMLButtonElement>) {
-        let channelName = event.currentTarget.dataset.channelid as string;
-        console.log("delete channel" + channelName);
+        let channelId = event.currentTarget.dataset.channelid as string;
+        console.log("delete channel: " + channelId);
+        this.props.DeleteChannel(this.state.UserName, channelId);
     }
 
     LogOut(event: React.FormEvent<HTMLInputElement>) {

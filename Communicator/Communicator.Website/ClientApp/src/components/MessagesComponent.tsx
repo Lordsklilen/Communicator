@@ -399,12 +399,10 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         //this.props.SearchForFriends(searchPhrase, this.state.UserName);
     }
 
-
     ChooseFriendToChat(event: React.FormEvent<HTMLElement>) {
         let friendName = event.currentTarget.dataset.friendusername as string;
         event.currentTarget.classList.add("active_chat");
         console.log("clicked friend " + friendName);
-        
     }
 
     ChooseNewFriend(event: React.FormEvent<HTMLElement>) {
@@ -422,7 +420,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
 }
 
 export default connect(

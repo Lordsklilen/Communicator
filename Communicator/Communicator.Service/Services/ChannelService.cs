@@ -1,8 +1,10 @@
-﻿using Communicator.DataProvider.Repositories;
+using Communicator.DataProvider.Models;
+using Communicator.DataProvider.Repositories;
 using Communicator.Service.DTO;
 using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Communicator.Service.Services
 {
@@ -187,6 +189,31 @@ namespace Communicator.Service.Services
                 return new ResponseLoadPrevious()
                 {
                     message = $"Cannot get new messages from channel \"{r.ChannelId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
+
+        public ResponsDeleteChannel DeleteChannel(RequestDeleteChannel r)
+        {
+            try
+            {
+                _channelRepository.DeleteChannel(r.ChannelId);
+                var channels = _channelRepository.GetUserChannels(r.UserId);
+                return new ResponsDeleteChannel()
+                {
+                    message = $"Channel \"{r.ChannelId}\", deleted",
+                    status = ResponseStatus.Success,
+                    Channels = channels
+
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsDeleteChannel()
+                {
+                    message = $"Cannot delete channel \"{r.ChannelId}\".",
                     exception = ex,
                     status = ResponseStatus.Error
                 };
