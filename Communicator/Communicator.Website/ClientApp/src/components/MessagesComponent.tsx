@@ -223,7 +223,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return (
                 <div className="chat_list" key={i.toString()} data-friendusername={friendId} onClick={this.ChooseFriendToChat.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friendId} alt="sunil" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friendId} alt="Profile" /> </div>
                         <div className="chat_ib">
                             <h4>{friendId}</h4>
                         </div>
@@ -245,18 +245,14 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         return messages.map((message: Message, i: number) => {
-            var date = new Date(message.SentTime);
-            let day = date.getDate();
-            let month = this.monthNames[date.getMonth()];
-            let hour = date.getHours();
-            let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-
+            let MessageDatetime = this.GetDateFromMessage(message); 
             if (message.UserId === this.state.UserName) {
                 return (
                     <div className="outgoing_msg" key={message.MessageId}>
                         <div className="sent_msg">
                             <p><Emoji text={message.Content} /></p>
-                            <span className="time_date float_right"> {hour}:{minutes}    |    {month} {day} </span></div>
+                            {MessageDatetime}
+                        </div>
                     </div>
                 )
             }
@@ -268,7 +264,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                         <div className="received_msg">
                             <div className="received_withd_msg">
                                 <p><Emoji text={message.Content} /></p>
-                                <span className="time_date float_left"> {hour}:{minutes}    |    {month} {day}</span></div>
+                                {MessageDatetime}
+                            </div>
                         </div>
                     </div>
                 )
@@ -289,21 +286,34 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 }).find(x => x) as string;
             }
             let lastMessage = this.getLastMessage(channel);
+            let MessageDatetime = this.GetDateFromMessage(lastMessage);
             var messagePeak = "";
             if (lastMessage.UserId !== undefined)
                 messagePeak = lastMessage.UserId + ": " + lastMessage.Content.substring(0, 30);
+
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
                         <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + channelname} alt="User {channelname}" /> </div>
                         <div className="chat_ib">
-                            <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
+                            <h5>{channelname}{MessageDatetime}</h5>
                             <p><Emoji text={messagePeak} /></p>
                         </div>
                     </div>
                 </div>
             )
         });
+    }
+
+    GetDateFromMessage(message: Message) {
+        if (message === null || message === undefined || message.SentTime === undefined)
+            return "";
+        var date = new Date(message.SentTime);
+        let day = date.getDate();
+        let month = this.monthNames[date.getMonth()];
+        let hour = date.getHours();
+        let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+        return <span className='chat_date float_left'> {hour}:{minutes}    |    {month} {day}</span>;
     }
 
     Friends() {

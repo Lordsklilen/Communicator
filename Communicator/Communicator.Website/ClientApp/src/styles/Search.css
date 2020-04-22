@@ -92,3 +92,17 @@
 h4 {
     margin:0 auto;
 }
+
+.ManageRight {
+    float: right;
+    width: 20%;
+}
+.channelManageLeft {
+    float: left;
+    width: 60%;
+}
+.channel_list {
+    border-bottom: 1px solid #c4c4c4;
+    margin: 0;
+    padding: 5px;
+}

@@ -7,6 +7,7 @@ import { ApplicationState } from '../store/index';
 import { connect } from 'react-redux';
 import { CookiesManager } from '../Managers/CookiesManager'
 import { Link } from 'react-router-dom';
+import { Channel } from '../store/Models/Channel';
 
 
 type SettingsProps =
@@ -21,6 +22,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         User: null,
         errorMessage: "",
         ConfirmationField: "",
+        Channels: null,
     };
 
     componentDidMount() {
@@ -29,6 +31,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
             this.props.history.push("/");
         }
         this.props.GetUser(username);
+        this.props.GetChannelsForUser(username);
         this.setState({ UserName: username })
         console.log("component Mounted, fetching data for user" + username)
     }
@@ -67,70 +70,80 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                 </header>
 
                 <div className="LoginForm">
-                    <title title="Communicator" />
-                    <h1>Update your data</h1>
+                    <h2>Update your data</h2>
                     <div className="Register">
                         <FormGroup>
                             <Label>User name</Label>
-                            <Input
-                                autoFocus
-                                id="registerUserName"
-                                type="text"
-                                value={this.state.UserName}
-                                name="UserId"
-                                disabled={true}
-                            />
+                            <Input id="registerUserName" type="text" value={this.state.UserName} name="UserId" disabled={true} />
                         </FormGroup>
                         <FormGroup>
-
                             <Label>Email</Label>
-                            <Input
-                                autoFocus
-                                id="updateEmail"
-                                type="email"
-                                name="Email"
-                                placeholder={Email}
-                            />
+                            <Input id="updateEmail" type="email" name="Email" placeholder={Email} />
                         </FormGroup>
                         <img className="bigProfilImage" src={"/User/GetImage/" + this.state.UserName} alt="Profile" />
                         <FormGroup>
                             <Label>Current Profile Image</Label>
-                            <Input
-                                autoFocus
-                                id="uploadImage"
-                                type="file"
-                                name="Image"
-                            />
+                            <Input id="uploadImage" type="file" name="Image" />
                         </FormGroup>
                         <FormGroup>
                             <Label>Old Password</Label>
-                            <Input
-                                id="oldPassword"
-                                name="OldPassword"
-                                type="password" />
+                            <Input id="oldPassword" name="OldPassword" type="password" />
                         </FormGroup>
                         <FormGroup>
                             <Label>New Password</Label>
-                            <Input
-                                id="newPassword"
-                                name="NewPassword"
-                                type="password" />
+                            <Input id="newPassword" name="NewPassword" type="password" />
                         </FormGroup>
                         <FormGroup>
                             <Label>Confirm new password</Label>
-                            <Input
-                                id="newPasswordConfirm"
-                                type="password" />
+                            <Input id="newPasswordConfirm" type="password" />
                         </FormGroup>
                         <Label className="errorField">{this.props.errorMessage}</Label>
                         <Label className="errorField">{this.state.errorMessage}</Label>
                         <Label className="ConfirmationField">{this.props.ConfirmationField}</Label>
                         <Input type="button" onClick={this.UpdateUser.bind(this)} value="Update User" />
+                        <hr />
+                    </div>
+                </div>
 
+                <div className="LoginForm">
+                    <h2>Manage your Channels and Friends</h2>
+                    <div>
+                        {this.RenderSettingsChannels()}
                     </div>
                 </div>
             </React.Fragment>
         );
+    }
+
+    RenderSettingsChannels() {
+        if (this.props.Channels == null || this.props.Channels.length <= 0)
+            return "";
+        let UserName = this.state.UserName;
+        return this.props.Channels.map((channel: Channel, i) => {
+            let channelname = channel.ChannelName;
+            if (!channel.isGroupChannel) {
+                channelname = channel.UserIds.filter(function (id: string) {
+                    return id !== UserName;
+                }).find(x => x) as string;
+            }
+
+            return (
+                <div className="channel_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + channelname} alt="User {channelname}" /> </div>
+                        <div className="channelManageLeft">
+                            <h5>{channelname}</h5>
+                        </div>
+                        <button className="fa fa-times fa-lg exitSearch ManageRight" data-channelid={channel.ChannelId.toString()} onClick={this.DeleteChannel.bind(this)} />
+                    </div>
+                </div>
+            )
+        });
+    }
+
+    DeleteChannel(event: React.FormEvent<HTMLButtonElement>) {
+        let channelName = event.currentTarget.dataset.channelid as string;
+        console.log("delete channel" + channelName);
     }
 
     LogOut(event: React.FormEvent<HTMLInputElement>) {
@@ -139,6 +152,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         CookiesManager.FillUserName("");
         this.props.history.push('/');
     }
+
     UpdateUser(event: React.FormEvent<HTMLInputElement>) {
         var email = (document.getElementById("updateEmail") as HTMLInputElement).value;
         var oldpassword = (document.getElementById("oldPassword") as HTMLInputElement).value;

@@ -52,7 +52,6 @@ h4 {
     border: 1px solid #cdcdcd;
     border-width: 0 0 1px 0;
     width: 80%;
-    /*padding: 2px 0 4px 6px;*/
     background: none;
 }
 
@@ -85,7 +84,21 @@ h4 {
     margin: auto
 }
 
+.channelManageLeft {
+
+}
+
+.chat_date {
+    font-size: 11px;
+}
+.ManageRight {
+    float: right;
+    width: 80%;
+}
+
+
 .chat_img {
+    display:block;
     float: left;
     width: 11%;
 }
