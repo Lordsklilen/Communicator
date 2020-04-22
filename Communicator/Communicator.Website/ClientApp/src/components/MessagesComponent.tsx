@@ -120,6 +120,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                     <div className="recent_heading">
                                         <h4>Friends</h4>
                                         <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
+                                        <Input type="button" onClick={this.ShowCreateChat.bind(this)} value="Create chat" />
                                         <h4>Channels</h4>
                                     </div>
                                 </div>
@@ -155,6 +156,20 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)} />
                         </div>
                         <div id="searchFriends" className="SearchedFriends">
+                            {this.RenderNewFriends()}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Create chat Form */}
+                <div className="form-popupHide" id="CreateChatDiv">
+                    <div className="FormBody">
+                        <div className="PopupSearch">
+                            <input id="CreateChatName" type="text" placeholder="Type name of chat.." name="search" />
+                            <button className="fa fa-check fa-lg searchSubmit" onClick={this.CreateChat.bind(this)} />
+                            <button className="fa fa-times fa-lg exitSearch" onClick={this.HideCreateChat.bind(this)} />
+                        </div>
+                        <div id="CreateChannelFriends" className="SearchedFriends">
                             {this.RenderFriends()}
                         </div>
                     </div>
@@ -175,7 +190,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         }
     }
 
-    RenderFriends() {
+    RenderNewFriends() {
         let friends = this.Friends();
         return this.props.SearchedFriends.map((friend: ApplicationUser, i: number) => {
             if (friends.includes(friend.UserName) || this.state.UserName === friend.UserName)
@@ -191,6 +206,33 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 </div>
             )
         })
+    }
+
+    RenderFriends() {
+        if (this.props.Channels == null || this.props.Channels.length <= 0)
+            return "";
+        let UserName = this.state.UserName;
+        return this.props.Channels.map((channel: Channel, i) => {
+            
+            if (channel.isGroupChannel) {
+                return "";
+            }
+            let friendId = channel.UserIds.filter(function (id: string) {
+                return id !== UserName;
+            }).find(x => x) as string;
+            return (
+                <div className="chat_list" key={i.toString()} data-friendusername={friendId} onClick={this.ChooseFriendToChat.bind(this)}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friendId} alt="sunil" /> </div>
+                        <div className="chat_ib">
+                            <h4>{friendId}</h4>
+                        </div>
+                    </div>
+                </div>
+            )
+        })
+
+
     }
 
     RenderMessages() {
@@ -267,7 +309,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     Friends() {
         let friends = this.props.Channels.filter((channel: Channel, i) => {
             return !channel.isGroupChannel;
-
         });
         return friends.map((friend) => {
             return friend.UserIds.filter((id: string) => {
@@ -324,13 +365,36 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupShow")
     }
 
+    ShowCreateChat(event: React.FormEvent<HTMLInputElement>) {
+        (document.getElementById('CreateChatDiv') as HTMLInputElement).className = ("form-popupShow")
+    }
+
     HideSearch(event: React.FormEvent<HTMLSpanElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide")
+    }
+
+    HideCreateChat(event: React.FormEvent<HTMLSpanElement>) {
+        (document.getElementById('CreateChatDiv') as HTMLInputElement).className = ("form-popupHide")
     }
 
     SearchForFriends(event: React.FormEvent<HTMLButtonElement>) {
         let searchPhrase = (document.getElementById('SearchFriendsText') as HTMLInputElement).value;
         this.props.SearchForFriends(searchPhrase, this.state.UserName);
+    }
+
+    CreateChat(event: React.FormEvent<HTMLElement>) {
+        let chatName = (document.getElementById('CreateChatName') as HTMLInputElement).value;
+        console.log("send data and create chat" + chatName);
+        //send data to props!!!
+        //this.props.SearchForFriends(searchPhrase, this.state.UserName);
+    }
+
+
+    ChooseFriendToChat(event: React.FormEvent<HTMLElement>) {
+        let friendName = event.currentTarget.dataset.friendusername as string;
+        event.currentTarget.classList.add("active_chat");
+        console.log("clicked friend " + friendName);
+        
     }
 
     ChooseNewFriend(event: React.FormEvent<HTMLElement>) {

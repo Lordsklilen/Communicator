@@ -34,10 +34,15 @@ namespace Communicator.DataProvider.Repositories
         {
             try
             {
-                var existRole = _roleManager.FindByNameAsync(ApplicationRole.stadardRole).Result;
+                var existRole = _roleManager.FindByNameAsync(ApplicationRole.USER_ROLE).Result;
                 if (existRole == null)
                 {
-                    Create(ApplicationRole.stadardRole);
+                    Create(ApplicationRole.USER_ROLE);
+                }
+                var existAdminRole = _roleManager.FindByNameAsync(ApplicationRole.ADMIN_ROLE).Result;
+                if (existAdminRole == null)
+                {
+                    Create(ApplicationRole.ADMIN_ROLE);
                 }
             }
             catch (Exception) { }

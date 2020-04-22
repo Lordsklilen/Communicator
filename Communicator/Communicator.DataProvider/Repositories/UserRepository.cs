@@ -12,6 +12,7 @@ namespace Communicator.DataProvider.Repositories
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
+
         public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
             _context = context;
@@ -37,7 +38,7 @@ namespace Communicator.DataProvider.Repositories
             };
             user.PasswordHash = hasher.HashPassword(user, password);
             _userManager.CreateAsync(user).Wait();
-            _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole).Wait();
+            _userManager.AddToRoleAsync(user, ApplicationRole.USER_ROLE).Wait();
 
             var res = SignIn(user, password);
             return res;
@@ -68,7 +69,6 @@ namespace Communicator.DataProvider.Repositories
             }
             return result;
         }
-
 
         //Friends list
         public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)
@@ -110,7 +110,6 @@ namespace Communicator.DataProvider.Repositories
             }
             return false;
         }
-
 
         public void SignOutAsync()
         {
