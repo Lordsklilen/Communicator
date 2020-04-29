@@ -82,7 +82,6 @@ namespace Communicator.DataProvider.Repositories
         // SignIn/Out
         public bool SignIn(ApplicationUser user, string password)
         {
-
             if (user == null)
             {
                 throw new Exception("User does not exist.");

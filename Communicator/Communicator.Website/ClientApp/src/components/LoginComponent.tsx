@@ -109,6 +109,7 @@ class LoginComponent extends React.Component<LoginProps, LoginState> {
                 }
             });
     }
+
     private toggle = () => {
         this.setState({
             isOpen: !this.state.isOpen

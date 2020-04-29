@@ -213,7 +213,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return "";
         let UserName = this.state.UserName;
         return this.props.Channels.map((channel: Channel, i) => {
-            
+
             if (channel.isGroupChannel) {
                 return "";
             }
@@ -224,9 +224,13 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 <div className="chat_list" key={i.toString()} data-friendusername={friendId} onClick={this.ChooseFriendToChat.bind(this)}>
                     <div className="chat_people">
                         <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friendId} alt="Profile" /> </div>
-                        <div className="chat_ib">
+                        <div className="createChatFriendBox">
                             <h4>{friendId}</h4>
                         </div>
+                        <label className="createChatCheckbox">
+                            <input type="checkbox" data-friendusername={friendId} name="friendCheckboxes" id={friendId + "_checkbox"}/>
+                            <span className="checkmark"></span>
+                        </label>
                     </div>
                 </div>
             )
@@ -245,7 +249,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         return messages.map((message: Message, i: number) => {
-            let MessageDatetime = this.GetDateFromMessage(message); 
+            let MessageDatetime = this.GetDateFromMessage(message);
             if (message.UserId === this.state.UserName) {
                 return (
                     <div className="outgoing_msg" key={message.MessageId}>
@@ -394,15 +398,27 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
     CreateChat(event: React.FormEvent<HTMLElement>) {
         let chatName = (document.getElementById('CreateChatName') as HTMLInputElement).value;
-        console.log("send data and create chat" + chatName);
-        //send data to props!!!
+        if (chatName === "")
+            return "";
+        var checkboxes = document.getElementsByName("friendCheckboxes") as NodeListOf<HTMLInputElement>;
+        var checkboxesChecked = [];
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i]);
+            }
+        }
+        if (checkboxesChecked.length < 1)
+            return;
+        let userList = checkboxesChecked.map(x => x.dataset.friendusername as string);
+        userList.push(this.state.UserName);
+        console.log("send data and create chat" + chatName + "with users" + userList.join(","));
         //this.props.SearchForFriends(searchPhrase, this.state.UserName);
     }
 
     ChooseFriendToChat(event: React.FormEvent<HTMLElement>) {
         let friendName = event.currentTarget.dataset.friendusername as string;
-        event.currentTarget.classList.add("active_chat");
-        console.log("clicked friend " + friendName);
+        var checkbox = (document.getElementById(friendName + '_checkbox') as HTMLInputElement);
+        checkbox.checked = !checkbox.checked;
     }
 
     ChooseNewFriend(event: React.FormEvent<HTMLElement>) {
