@@ -294,16 +294,17 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             var messagePeak = "";
             if (lastMessage.UserId !== undefined)
                 messagePeak = lastMessage.UserId + ": " + lastMessage.Content.substring(0, 30);
-
+            let imgUrl = channel.isGroupChannel ? "/Channel/GetChannelImage": "/User/GetImage/" + channelname;
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + channelname} alt="User {channelname}" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={imgUrl} alt="User {channelname}" /> </div>
                         <div className="chat_ib">
                             <h5>{channelname}{MessageDatetime}</h5>
                             <p><Emoji text={messagePeak} /></p>
                         </div>
                     </div>
+                    <span className="tooltiptext">{channel.UserIds.join(", ")}</span>
                 </div>
             )
         });
@@ -412,7 +413,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         let userList = checkboxesChecked.map(x => x.dataset.friendusername as string);
         userList.push(this.state.UserName);
         console.log("send data and create chat" + chatName + "with users" + userList.join(","));
-        //this.props.SearchForFriends(searchPhrase, this.state.UserName);
+        this.props.CreateChannel(this.state.UserName, chatName, userList);
     }
 
     ChooseFriendToChat(event: React.FormEvent<HTMLElement>) {

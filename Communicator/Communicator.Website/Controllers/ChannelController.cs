@@ -3,6 +3,7 @@ using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Communicator.Website.Controllers
 {
@@ -81,6 +82,14 @@ namespace Communicator.Website.Controllers
             var request = ToObject<RequestDeleteChannel>(json);
             return PrepareResponse(_channelService.DeleteChannel(request));
         }
+
+        [HttpGet]
+        [Route("GetChannelImage")]
+        public async Task<IActionResult> GetImage()
+        {
+            return PhysicalFile(_channelService.GetChannelImage(), "image/jpeg");
+        }
+
 
     }
 }

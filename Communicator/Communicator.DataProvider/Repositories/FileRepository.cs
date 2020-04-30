@@ -42,6 +42,23 @@ namespace Communicator.DataProvider.Repositories
                 return GetDefaultPicture();
         }
 
+        public string GetGroupImage()
+        {
+
+            var path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Communicator",
+                "default-group.png"
+                );
+
+            if (File.Exists(path))
+            {
+                return path;
+            }
+            else
+                return GetDefaultPicture();
+        }
+
         private string GetDefaultPicture()
         {
             var path = Path.Combine(

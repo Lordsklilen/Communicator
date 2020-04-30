@@ -11,5 +11,6 @@ namespace Communicator.Service.PublicInterfaces
         ResponseUpdateMessages UpdateMessages(RequestUpdateMessages r);
         ResponseLoadPrevious LoadPrevious(RequestLoadPrevious r);
         ResponsDeleteChannel DeleteChannel(RequestDeleteChannel r);
+        string GetChannelImage();
     }
 }

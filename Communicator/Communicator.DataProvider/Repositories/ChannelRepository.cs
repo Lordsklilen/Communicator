@@ -20,6 +20,7 @@ namespace Communicator.DataProvider.Repositories
             var channel = new Channel()
             {
                 ChannelName = channelName,
+                isGroupChannel = Users.Count > 2
             };
             foreach (var user in Users)
             {

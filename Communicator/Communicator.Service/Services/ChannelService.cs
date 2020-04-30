@@ -1,10 +1,8 @@
-using Communicator.DataProvider.Models;
 using Communicator.DataProvider.Repositories;
 using Communicator.Service.DTO;
 using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
 using System;
-using System.Collections.Generic;
 
 namespace Communicator.Service.Services
 {
@@ -12,11 +10,13 @@ namespace Communicator.Service.Services
     {
         private readonly ChannelRepository _channelRepository;
         private readonly UserRepository _userRepository;
+        private readonly FileRepository _fileRepository;
 
-        public ChannelService(ChannelRepository channelRepository, UserRepository userRepository)
+        public ChannelService(ChannelRepository channelRepository, UserRepository userRepository, FileRepository fileRepository)
         {
             _channelRepository = channelRepository;
             _userRepository = userRepository;
+            _fileRepository = fileRepository;
         }
         public ResponseCreateChannel CreateChannel(RequestCreateChannel r)
         {
@@ -218,6 +218,12 @@ namespace Communicator.Service.Services
                     status = ResponseStatus.Error
                 };
             }
+        }
+
+
+        public string GetChannelImage()
+        {
+            return _fileRepository.GetGroupImage();
         }
     }
 }

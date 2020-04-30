@@ -9,11 +9,13 @@
     float: left;
     width: 70%;
     background: #f1f1f1;
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
+
 .PopupSearch button {
     height: 47px;
 }
+
 .searchSubmit {
     float: left;
     width: 15%;
@@ -22,7 +24,7 @@
     color: white;
     font-size: 17px;
     border: 1px solid grey;
-    border-left: none; 
+    border-left: none;
     cursor: pointer;
 }
 
@@ -76,40 +78,44 @@
     cursor: pointer;
 }
 
-.exitSearch :hover {
-    background: #e51400;
-}
+    .exitSearch :hover {
+        background: #e51400;
+    }
+
 .FormBody {
     padding: 50px;
-
-
 }
+
 .SearchSingleUser {
     border: 1px solid grey;
     padding: 4px;
     background: #f1f1f1;
 }
+
 h4 {
-    margin:0 auto;
+    margin: 0 auto;
 }
 
 .ManageRight {
     float: right;
     width: 20%;
 }
+
 .channelManageLeft {
     float: left;
     width: 60%;
 }
+
 .channel_list {
     border-bottom: 1px solid #c4c4c4;
     margin: 0;
     padding: 5px;
 }
+
 .createChatFriendBox {
     width: 60%;
-    float:left;
-    display:block;
+    float: left;
+    display: block;
 }
 
 .createChatCheckbox {
@@ -126,13 +132,13 @@ h4 {
     user-select: none;
 }
 
-.createChatCheckbox input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-}
+    .createChatCheckbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
 
 .checkmark {
     position: absolute;
@@ -171,4 +177,20 @@ h4 {
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+}
+
+
+.chat_list .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 3px ;
+    position: absolute;
+    z-index: 1;
+}
+
+.chat_list:hover .tooltiptext {
+    visibility: visible;
 }

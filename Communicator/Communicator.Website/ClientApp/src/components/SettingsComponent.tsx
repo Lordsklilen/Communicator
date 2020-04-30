@@ -126,11 +126,12 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                     return id !== UserName;
                 }).find(x => x) as string;
             }
+            let imgUrl = channel.isGroupChannel ? "/Channel/GetChannelImage" : "/User/GetImage/" + channelname;
 
             return (
                 <div className="channel_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + channelname} alt="User {channelname}" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={imgUrl} alt="User {channelname}" /> </div>
                         <div className="channelManageLeft">
                             <h5>{channelname}</h5>
                         </div>
