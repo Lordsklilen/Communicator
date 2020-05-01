@@ -78,7 +78,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     UpdateMessages() {
-        if (this.props.Channel !== null && this.props.Channel !== undefined) {
+        if (this.props.Channel !== null && this.props.Channel !== undefined && this.props.Channels.some(x => x == this.props.Channel)) {
+
             let date = new Date(0);
             if (this.props.Channel.Messages.length > 0) {
                 date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
@@ -235,8 +236,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 </div>
             )
         })
-
-
     }
 
     RenderMessages() {

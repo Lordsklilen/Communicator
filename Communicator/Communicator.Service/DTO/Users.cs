@@ -9,6 +9,7 @@ namespace Communicator.Service.DTO
     {
         public string email;
         public string password;
+        public UserRole role;
     }
 
     public class RequestGetUser : RequestBase

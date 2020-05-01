@@ -3,7 +3,6 @@ using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Communicator.Website.Controllers
 {
@@ -45,7 +44,7 @@ namespace Communicator.Website.Controllers
         //Authorized Methods
         [HttpGet]
         [Route("Api/CheckAuthorization")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public bool CheckAuthorization()
         {
             return true;
@@ -53,7 +52,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/GetUser")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string GetUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUser>(json);
@@ -62,7 +61,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/SignOut")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string SignOut()
         {
             _userService.SignOutAsync();
@@ -71,7 +70,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/GetUsers")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string CheckAuthorization([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUsers>(json);
@@ -81,7 +80,7 @@ namespace Communicator.Website.Controllers
         //Form Request
         [HttpPost]
         [Route("Api/UpdateUser")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string UpdateUser([FromForm]RequestUpdateUser requestUpdateUser)
         {
             return PrepareResponse(_userService.UpdateUser(requestUpdateUser));
@@ -89,7 +88,7 @@ namespace Communicator.Website.Controllers
 
         [HttpGet]
         [Route("GetImage/{UserId}")]
-        public async Task<IActionResult> GetImage(string UserId)
+        public IActionResult GetImage(string UserId)
         {
             return PhysicalFile(_userService.GetProfileImage(UserId), "image/jpeg");
         }

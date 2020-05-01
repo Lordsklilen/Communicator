@@ -38,7 +38,10 @@ namespace Communicator.DataProvider.Repositories
             };
             user.PasswordHash = hasher.HashPassword(user, password);
             _userManager.CreateAsync(user).Wait();
-            _userManager.AddToRoleAsync(user, ApplicationRole.USER_ROLE).Wait();
+            if (userName != "Admin")
+                _userManager.AddToRoleAsync(user, ApplicationRole.USER_ROLE).Wait();
+            else
+                _userManager.AddToRoleAsync(user, ApplicationRole.ADMIN_ROLE).Wait();
 
             var res = SignIn(user, password);
             return res;

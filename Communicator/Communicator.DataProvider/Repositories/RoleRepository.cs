@@ -44,6 +44,7 @@ namespace Communicator.DataProvider.Repositories
                 {
                     Create(ApplicationRole.ADMIN_ROLE);
                 }
+
             }
             catch (Exception) { }
         }

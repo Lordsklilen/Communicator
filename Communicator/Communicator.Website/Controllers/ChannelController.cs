@@ -3,7 +3,6 @@ using Communicator.Service.PublicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Communicator.Website.Controllers
 {
@@ -20,7 +19,7 @@ namespace Communicator.Website.Controllers
         }
         [HttpPost]
         [Route("Api/CreateChannel")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string CreateChannel([FromBody] JsonElement json)
         {
             var request = ToObject<RequestCreateChannel>(json);
@@ -30,7 +29,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/GetChannelsForUser")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string GetChannelsForUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUserChannels>(json);
@@ -39,7 +38,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/SelectChannel")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string SelectChannel([FromBody] JsonElement json)
         {
             var request = ToObject<RequestSelectChannel>(json);
@@ -49,7 +48,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/SendMessage")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string SendMessage([FromBody] JsonElement json)
         {
             var request = ToObject<RequestSendMessage>(json);
@@ -58,7 +57,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/UpdateMessages")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string UpdateMessages([FromBody] JsonElement json)
         {
             var request = ToObject<RequestUpdateMessages>(json);
@@ -67,7 +66,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/LoadPrevious")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string LoadPrevious([FromBody] JsonElement json)
         {
             var request = ToObject<RequestLoadPrevious>(json);
@@ -76,7 +75,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/DeleteChannel")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string DeleteChannel([FromBody] JsonElement json)
         {
             var request = ToObject<RequestDeleteChannel>(json);
@@ -85,11 +84,9 @@ namespace Communicator.Website.Controllers
 
         [HttpGet]
         [Route("GetChannelImage")]
-        public async Task<IActionResult> GetImage()
+        public IActionResult GetImage()
         {
             return PhysicalFile(_channelService.GetChannelImage(), "image/jpeg");
         }
-
-
     }
 }

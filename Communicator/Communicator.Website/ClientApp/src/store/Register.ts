@@ -3,7 +3,6 @@ import { Action, Reducer } from 'redux';
 // STATE
 export interface RegisterState {
     errorMessage: string;
-    isOpen: boolean;
 }
 
 // ACTIONS
@@ -15,8 +14,7 @@ export const actionCreators = {};
 export const reducer: Reducer<RegisterState> = (state: RegisterState | undefined, incomingAction: Action): RegisterState => {
     if (state === undefined) {
         return {
-            errorMessage: "",
-            isOpen: false
+            errorMessage: ""
         };
     }
     return state;
