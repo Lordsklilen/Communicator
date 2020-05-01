@@ -1,5 +1,6 @@
 ﻿using Communicator.DataProvider.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,25 @@ namespace Communicator.DataProvider.Repositories
         public ApplicationUser GetById(string id)
         {
             return _userManager.FindByIdAsync(id).Result;
+        }
+        public void Delete(ApplicationUser user)
+        {
+            var appUser = _context.Users
+                .Where(x => x.UserName == user.UserName)
+                .Include(x => x.ApplicationUserChannels)
+                .ThenInclude(x => x.Channel)
+                .First();
+            foreach (var applicationUserChannel in appUser.ApplicationUserChannels)
+            {
+                var channel = _context.Channels
+                    .Where(x => x.ChannelId == applicationUserChannel.ChannelId)
+                    .Include(x => x.Messages)
+                    .First();
+                _context.Messages.RemoveRange(channel.Messages);
+                _context.Channels.Remove(channel);
+            }
+            _context.Users.Remove(appUser);
+            _context.SaveChanges();
         }
 
         public HashSet<ApplicationUser> GetById(string[] ids)

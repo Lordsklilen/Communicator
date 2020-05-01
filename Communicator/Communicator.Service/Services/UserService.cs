@@ -257,5 +257,38 @@ namespace Communicator.Service.Services
                 };
             }
         }
+
+        public ResponseDeleteUser DeleteUser(RequestDeleteUser request)
+        {
+            try
+            {
+                var user = _userRepository.GetById(request.UserId);
+                _userRepository.Delete(user);
+                var users = _userRepository.GetAllUsers();
+                if (users != null)
+                {
+                    return new ResponseDeleteUser()
+                    {
+                        message = $"User \"{user.Id}\" is correct.",
+                        status = ResponseStatus.Success,
+                        Users = users.ToArray()
+                    };
+                }
+                return new ResponseDeleteUser()
+                {
+                    message = $"User \"{request.UserId}\" cannot be get.",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDeleteUser()
+                {
+                    message = $"User \"{request.UserId}\" cannot be get.",
+                    status = ResponseStatus.Error,
+                    exception = ex
+                };
+            }
+        }
     }
 }

@@ -77,14 +77,6 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(_userService.GetUsersById(request));
         }
 
-        [HttpPost]
-        [Route("Api/GetAllUsers")]
-        [Authorize(Roles = "Admin")]
-        public string GetAllUsers()
-        {
-            return PrepareResponse(_userService.GetAllUsers());
-        }
-
         //Form Request
         [HttpPost]
         [Route("Api/UpdateUser")]
@@ -99,6 +91,26 @@ namespace Communicator.Website.Controllers
         public IActionResult GetImage(string UserId)
         {
             return PhysicalFile(_userService.GetProfileImage(UserId), "image/jpeg");
+        }
+
+
+        //Admin Only
+
+        [HttpPost]
+        [Route("Api/GetAllUsers")]
+        [Authorize(Roles = "Admin")]
+        public string GetAllUsers()
+        {
+            return PrepareResponse(_userService.GetAllUsers());
+        }
+
+        [HttpPost]
+        [Route("Api/DeleteUser")]
+        [Authorize(Roles = "Admin")]
+        public string DeleteUser([FromBody] JsonElement json)
+        {
+            var request = ToObject<RequestDeleteUser>(json);
+            return PrepareResponse(_userService.DeleteUser(request));
         }
 
     }

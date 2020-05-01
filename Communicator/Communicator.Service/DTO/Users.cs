@@ -30,6 +30,11 @@ namespace Communicator.Service.DTO
         public string word;
     }
 
+    public class RequestDeleteUser : RequestBase
+    {
+
+    }
+
     public class RequestAuthenticateUser : RequestBase
     {
         public string password;
@@ -65,5 +70,9 @@ namespace Communicator.Service.DTO
     {
         public ApplicationUser User;
         public bool IsSignedIn;
+    }
+    public class ResponseDeleteUser : ResponseBase
+    {
+        public ApplicationUser[] Users;
     }
 }

@@ -78,13 +78,15 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     UpdateMessages() {
-        if (this.props.Channel !== null && this.props.Channel !== undefined && this.props.Channels.some(x => x == this.props.Channel)) {
-
-            let date = new Date(0);
-            if (this.props.Channel.Messages.length > 0) {
-                date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
+        if (this.props.Channel !== null && this.props.Channel !== undefined){
+            let tmp = 0;
+            if (this.props.Channels.some(x => this.props.Channel !== null && x.ChannelId === this.props.Channel.ChannelId)) {
+                let date = new Date(0);
+                if (this.props.Channel.Messages.length > 0) {
+                    date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
+                }
+                this.props.UpdateMessages(this.state.UserName, this.props.Channel.ChannelId, date)
             }
-            this.props.UpdateMessages(this.state.UserName, this.props.Channel.ChannelId, date)
         }
     }
 
