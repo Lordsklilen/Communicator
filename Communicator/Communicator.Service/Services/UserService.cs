@@ -226,5 +226,36 @@ namespace Communicator.Service.Services
         {
             return _fileRepository.GetProfileImage(UserId);
         }
+
+        public ResponseGetAllUsers GetAllUsers()
+        {
+            try
+            {
+                var users = _userRepository.GetAllUsers();
+                if (users != null)
+                {
+                    return new ResponseGetAllUsers()
+                    {
+                        message = $"Returned users.",
+                        status = ResponseStatus.Success,
+                        Users = users.ToArray()
+                    };
+                }
+                return new ResponseGetAllUsers()
+                {
+                    message = "Cannot return users",
+                    status = ResponseStatus.Error
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseGetAllUsers()
+                {
+                    message = "Cannot return users.",
+                    status = ResponseStatus.Error,
+                    exception = ex
+                };
+            }
+        }
     }
 }

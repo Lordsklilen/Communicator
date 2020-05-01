@@ -72,6 +72,11 @@ namespace Communicator.DataProvider.Repositories
             }
             return result;
         }
+        public IEnumerable<ApplicationUser> GetAllUsers()
+        {
+            var result = _context.Users.AsEnumerable();
+            return result;
+        }
 
         //Friends list
         public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)

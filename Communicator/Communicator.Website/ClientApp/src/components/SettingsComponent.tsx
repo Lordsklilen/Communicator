@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { CookiesManager } from '../Managers/CookiesManager'
 import { Link } from 'react-router-dom';
 import { Channel } from '../store/Models/Channel';
+import { ApplicationUser } from '../store/Models/ApplicationUser';
 
 
 type SettingsProps =
@@ -23,6 +24,7 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         errorMessage: "",
         ConfirmationField: "",
         Channels: null,
+        AdminUsers: null,
     };
 
     componentDidMount() {
@@ -32,13 +34,15 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         }
         this.props.GetUser(username);
         this.props.GetChannelsForUser(username);
+        this.props.GetAllUsers();
         this.setState({ UserName: username })
-        console.log("component Mounted, fetching data for user" + username)
     }
 
     componentWillUnmount() {
         this.setState({
             User: null,
+            Channels: null,
+            AdminUsers: null,
         })
     }
 
@@ -111,6 +115,12 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
                         {this.RenderSettingsChannels()}
                     </div>
                 </div>
+                <div className="LoginForm">
+                    <h2>Admin Panel</h2>
+                    <div>
+                        {this.RenderAdminUsers()}
+                    </div>
+                </div>
             </React.Fragment>
         );
     }
@@ -142,10 +152,34 @@ class SettingsComponent extends React.Component<SettingsProps, SettingsState> {
         });
     }
 
+    RenderAdminUsers() {
+        if (this.props.AdminUsers == null || this.props.AdminUsers.length <= 0)
+            return "";
+        return this.props.AdminUsers.map((user: ApplicationUser, i) => {
+            let userId = user.UserName;
+            let imgUrl =  "/User/GetImage/" + userId;
+            return (
+                <div className="channel_list" data-userid={userId} key={userId}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img className="profilImage" src={imgUrl} alt="User {channelname}" /> </div>
+                        <div className="channelManageLeft">
+                            <h5>{userId}</h5>
+                        </div>
+                        <button className="fa fa-times fa-lg exitSearch ManageRight" data-userid={userId} onClick={this.DeleteUser.bind(this)} />
+                    </div>
+                </div>
+            )
+        });
+    }
+
     DeleteChannel(event: React.FormEvent<HTMLButtonElement>) {
         let channelId = event.currentTarget.dataset.channelid as string;
-        console.log("delete channel: " + channelId);
         this.props.DeleteChannel(this.state.UserName, channelId);
+    }
+
+    DeleteUser(event: React.FormEvent<HTMLButtonElement>) {
+        let userId = event.currentTarget.dataset.userid as string;
+        this.props.DeleteUser(userId);
     }
 
     LogOut(event: React.FormEvent<HTMLInputElement>) {

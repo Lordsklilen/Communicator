@@ -77,6 +77,14 @@ namespace Communicator.Website.Controllers
             return PrepareResponse(_userService.GetUsersById(request));
         }
 
+        [HttpPost]
+        [Route("Api/GetAllUsers")]
+        [Authorize(Roles = "Admin")]
+        public string GetAllUsers()
+        {
+            return PrepareResponse(_userService.GetAllUsers());
+        }
+
         //Form Request
         [HttpPost]
         [Route("Api/UpdateUser")]
