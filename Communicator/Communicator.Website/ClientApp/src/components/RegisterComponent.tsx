@@ -26,8 +26,7 @@ export interface ResponseCreateUser {
 class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
 
     state: Readonly<RegisterState> = {
-        errorMessage: "",
-        isOpen:false
+        errorMessage: ""
     };
 
     createUser(event: React.FormEvent<HTMLFormElement>) {
@@ -40,18 +39,14 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
             var email = (document.getElementById("registerEmail") as HTMLInputElement).value;
             var password = (document.getElementById("registerPasswordInput") as HTMLInputElement).value;
             var userName = (document.getElementById("registerUserName") as HTMLInputElement).value;
-            this.RequestCreateUser(userName, email, password);
-            console.log("user created");
-
+            this.RequestCreateUser(userName, email, password,1);
         }
-
     }
 
     handleOnChangePassword(event: React.FormEvent<HTMLInputElement>) {
         this.setState({
             errorMessage: this.validateFields()
         } as RegisterState);
-
     }
 
     validateFields() {
@@ -75,8 +70,8 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
                     <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
                         <Container>
                             <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
-                            <NavbarToggler onClick={this.toggle} className="mr-2" />
-                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
+                            <NavbarToggler className="mr-2" />
+                            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/">Log in</NavLink>
@@ -136,14 +131,8 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
         );
     }
 
-    private toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
-    }
-
     //Actions
-    RequestCreateUser(userName: string, email: string, password: string) {
+    RequestCreateUser(userName: string, email: string, password: string, role:number) {
 
         const requestOptions = {
             method: 'POST',
@@ -151,7 +140,8 @@ class RegisterComponent extends React.Component<RegisterProps, RegisterState> {
             body: JSON.stringify({
                 UserId: userName,
                 email: email,
-                password: password
+                password: password,
+                role: role,
             })
         };
         fetch('/User/Api/CreateUser', requestOptions)

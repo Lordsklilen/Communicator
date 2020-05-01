@@ -1,4 +1,4 @@
-﻿using Communicator.DataProvider.Repositories;
+using Communicator.DataProvider.Repositories;
 using Communicator.Service.DTO;
 using Communicator.Service.DTO.Base;
 using Communicator.Service.PublicInterfaces;
@@ -10,11 +10,13 @@ namespace Communicator.Service.Services
     {
         private readonly ChannelRepository _channelRepository;
         private readonly UserRepository _userRepository;
+        private readonly FileRepository _fileRepository;
 
-        public ChannelService(ChannelRepository channelRepository, UserRepository userRepository)
+        public ChannelService(ChannelRepository channelRepository, UserRepository userRepository, FileRepository fileRepository)
         {
             _channelRepository = channelRepository;
             _userRepository = userRepository;
+            _fileRepository = fileRepository;
         }
         public ResponseCreateChannel CreateChannel(RequestCreateChannel r)
         {
@@ -191,6 +193,37 @@ namespace Communicator.Service.Services
                     status = ResponseStatus.Error
                 };
             }
+        }
+
+        public ResponsDeleteChannel DeleteChannel(RequestDeleteChannel r)
+        {
+            try
+            {
+                _channelRepository.DeleteChannel(r.ChannelId);
+                var channels = _channelRepository.GetUserChannels(r.UserId);
+                return new ResponsDeleteChannel()
+                {
+                    message = $"Channel \"{r.ChannelId}\", deleted",
+                    status = ResponseStatus.Success,
+                    Channels = channels
+
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponsDeleteChannel()
+                {
+                    message = $"Cannot delete channel \"{r.ChannelId}\".",
+                    exception = ex,
+                    status = ResponseStatus.Error
+                };
+            }
+        }
+
+
+        public string GetChannelImage()
+        {
+            return _fileRepository.GetGroupImage();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Communicator.DataProvider.Repositories
             var channel = new Channel()
             {
                 ChannelName = channelName,
+                isGroupChannel = Users.Count > 2
             };
             foreach (var user in Users)
             {
@@ -144,6 +145,15 @@ namespace Communicator.DataProvider.Repositories
             return messages;
         }
 
-
+        public void DeleteChannel(int channelId)
+        {
+            var channel = _context.Channels
+                .Where(x => x.ChannelId == channelId)
+                .Include(x => x.Messages)
+                .First();
+            _context.Messages.RemoveRange(channel.Messages);
+            _context.Channels.Remove(channel);
+            _context.SaveChanges();
+        }
     }
 }

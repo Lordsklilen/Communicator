@@ -10,5 +10,7 @@ namespace Communicator.Service.PublicInterfaces
         ResponseSendMessage SendMessage(RequestSendMessage r);
         ResponseUpdateMessages UpdateMessages(RequestUpdateMessages r);
         ResponseLoadPrevious LoadPrevious(RequestLoadPrevious r);
+        ResponsDeleteChannel DeleteChannel(RequestDeleteChannel r);
+        string GetChannelImage();
     }
 }

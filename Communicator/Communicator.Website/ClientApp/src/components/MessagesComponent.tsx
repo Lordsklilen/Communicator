@@ -13,7 +13,7 @@ import '../styles/ChatMessages.css';
 import '../styles/Search.css';
 import { Channel } from '../store/Models/Channel';
 import { Message } from '../store/Models/Message';
-
+import Emoji from 'react-emoji-render';
 
 type MessagesProps =
     MessagesState &
@@ -26,7 +26,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     state: Readonly<MessagesState> = {
         UserName: "",
         SearchedFriends: this.props.SearchedFriends,
-        IsSignedIn: false,
         User: null,
         ShouldUpdateMessages: false,
         Channels: this.props.Channels,
@@ -52,7 +51,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             Channels: [],
             SearchedFriends: []
         })
-
     }
 
     componentDidUpdate(prevProps: MessagesProps, prevState: MessagesState) {
@@ -80,7 +78,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     UpdateMessages() {
-        if (this.props.Channel !== null && this.props.Channel !== undefined) {
+        if (this.props.Channel !== null && this.props.Channel !== undefined && this.props.Channels.some(x => x == this.props.Channel)) {
+
             let date = new Date(0);
             if (this.props.Channel.Messages.length > 0) {
                 date = this.props.Channel.Messages[this.props.Channel.Messages.length - 1].SentTime;
@@ -95,15 +94,17 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 <header>
                     <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
                         <Container>
-                            <NavbarBrand tag={Link} to="/">Communicator</NavbarBrand>
+                            <NavbarBrand tag={Link} to="/Settings">Communicator</NavbarBrand>
                             <NavbarToggler className="mr-2" />
                             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
-                                        <NavLink className="text-dark" to="/Settings">Hello {this.state.UserName}</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/Settings">Hello {this.state.UserName}
+                                            <img className="profilImage" src={"/User/GetImage/" + this.state.UserName} alt="Profile" />
+                                        </NavLink>
                                     </NavItem>
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
+                                        <NavLink tag={Link} className="text-dark LogOut" onClick={this.LogOut.bind(this)} to="/">Log out</NavLink>
                                     </NavItem>
                                 </ul>
                             </Collapse>
@@ -119,9 +120,8 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                                 <div className="headind_srch">
                                     <div className="recent_heading">
                                         <h4>Friends</h4>
-                                        <div>
-                                            <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
-                                        </div>
+                                        <Input type="button" onClick={this.ShowSearch.bind(this)} value="Add Friends" />
+                                        <Input type="button" onClick={this.ShowCreateChat.bind(this)} value="Create chat" />
                                         <h4>Channels</h4>
                                     </div>
                                 </div>
@@ -157,6 +157,20 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                             <button className="fa fa-times fa-lg exitSearch" onClick={this.HideSearch.bind(this)} />
                         </div>
                         <div id="searchFriends" className="SearchedFriends">
+                            {this.RenderNewFriends()}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Create chat Form */}
+                <div className="form-popupHide" id="CreateChatDiv">
+                    <div className="FormBody">
+                        <div className="PopupSearch">
+                            <input id="CreateChatName" type="text" placeholder="Type name of chat.." name="search" />
+                            <button className="fa fa-check fa-lg searchSubmit" onClick={this.CreateChat.bind(this)} />
+                            <button className="fa fa-times fa-lg exitSearch" onClick={this.HideCreateChat.bind(this)} />
+                        </div>
+                        <div id="CreateChannelFriends" className="SearchedFriends">
                             {this.RenderFriends()}
                         </div>
                     </div>
@@ -177,7 +191,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         }
     }
 
-    RenderFriends() {
+    RenderNewFriends() {
         let friends = this.Friends();
         return this.props.SearchedFriends.map((friend: ApplicationUser, i: number) => {
             if (friends.includes(friend.UserName) || this.state.UserName === friend.UserName)
@@ -185,10 +199,39 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return (
                 <div className="chat_list" key={i.toString()} data-friendusername={friend.UserName} onClick={this.ChooseNewFriend.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friend.UserName} alt="sunil" /> </div>
                         <div className="chat_ib">
                             <h4>{friend.UserName}</h4>
                         </div>
+                    </div>
+                </div>
+            )
+        })
+    }
+
+    RenderFriends() {
+        if (this.props.Channels == null || this.props.Channels.length <= 0)
+            return "";
+        let UserName = this.state.UserName;
+        return this.props.Channels.map((channel: Channel, i) => {
+
+            if (channel.isGroupChannel) {
+                return "";
+            }
+            let friendId = channel.UserIds.filter(function (id: string) {
+                return id !== UserName;
+            }).find(x => x) as string;
+            return (
+                <div className="chat_list" key={i.toString()} data-friendusername={friendId} onClick={this.ChooseFriendToChat.bind(this)}>
+                    <div className="chat_people">
+                        <div className="chat_img"> <img className="profilImage" src={"/User/GetImage/" + friendId} alt="Profile" /> </div>
+                        <div className="createChatFriendBox">
+                            <h4>{friendId}</h4>
+                        </div>
+                        <label className="createChatCheckbox">
+                            <input type="checkbox" data-friendusername={friendId} name="friendCheckboxes" id={friendId + "_checkbox"}/>
+                            <span className="checkmark"></span>
+                        </label>
                     </div>
                 </div>
             )
@@ -205,18 +248,14 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         return messages.map((message: Message, i: number) => {
-            var date = new Date(message.SentTime);
-            let day = date.getDate();
-            let month = this.monthNames[date.getMonth()];
-            let hour = date.getHours();
-            let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-
+            let MessageDatetime = this.GetDateFromMessage(message);
             if (message.UserId === this.state.UserName) {
                 return (
                     <div className="outgoing_msg" key={message.MessageId}>
                         <div className="sent_msg">
-                            <p>{message.Content}</p>
-                            <span className="time_date float_right"> {hour}:{minutes}    |    {month} {day}</span></div>
+                            <p><Emoji text={message.Content} /></p>
+                            {MessageDatetime}
+                        </div>
                     </div>
                 )
             }
@@ -224,11 +263,12 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
 
                 return (
                     <div className="incoming_msg" key={message.MessageId}>
-                        <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                        <div className="incoming_msg_img"> <img src={"/User/GetImage/" + message.UserId} alt="Profile" /> </div>
                         <div className="received_msg">
                             <div className="received_withd_msg">
-                                <p>{message.Content}</p>
-                                <span className="time_date float_left"> {hour}:{minutes}    |    {month} {day}</span></div>
+                                <p><Emoji text={message.Content} /></p>
+                                {MessageDatetime}
+                            </div>
                         </div>
                     </div>
                 )
@@ -249,27 +289,40 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
                 }).find(x => x) as string;
             }
             let lastMessage = this.getLastMessage(channel);
+            let MessageDatetime = this.GetDateFromMessage(lastMessage);
             var messagePeak = "";
             if (lastMessage.UserId !== undefined)
                 messagePeak = lastMessage.UserId + ": " + lastMessage.Content.substring(0, 30);
+            let imgUrl = channel.isGroupChannel ? "/Channel/GetChannelImage": "/User/GetImage/" + channelname;
             return (
                 <div className="chat_list" data-channelid={channel.ChannelId.toString()} key={channel.ChannelId.toString()} onClick={this.SelectChannel.bind(this)}>
                     <div className="chat_people">
-                        <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="User {channelname}" /> </div>
+                        <div className="chat_img"> <img className="profilImage" src={imgUrl} alt="User {channelname}" /> </div>
                         <div className="chat_ib">
-                            <h5>{channelname} <span className="chat_date">Dec 25(DATE)</span></h5>
-                            <p>{messagePeak}</p>
+                            <h5>{channelname}{MessageDatetime}</h5>
+                            <p><Emoji text={messagePeak} /></p>
                         </div>
                     </div>
+                    <span className="tooltiptext">{channel.UserIds.join(", ")}</span>
                 </div>
             )
         });
     }
 
+    GetDateFromMessage(message: Message) {
+        if (message === null || message === undefined || message.SentTime === undefined)
+            return "";
+        var date = new Date(message.SentTime);
+        let day = date.getDate();
+        let month = this.monthNames[date.getMonth()];
+        let hour = date.getHours();
+        let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+        return <span className='chat_date float_left'> {hour}:{minutes}    |    {month} {day}</span>;
+    }
+
     Friends() {
         let friends = this.props.Channels.filter((channel: Channel, i) => {
             return !channel.isGroupChannel;
-
         });
         return friends.map((friend) => {
             return friend.UserIds.filter((id: string) => {
@@ -278,7 +331,7 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         });
     }
 
-    getLastMessage(channel: Channel): Message{
+    getLastMessage(channel: Channel): Message {
         if (channel === null || channel === undefined)
             return new Message("");
         let messages = channel.Messages;
@@ -288,7 +341,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         if (message === null || message === undefined)
             return new Message("");
         return message
-        //return message.Content.substring(0, 30);
     }
 
     LoadPreviousMessages() {
@@ -320,7 +372,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
             return;
         }
         this.props.SendMessage(this.state.UserName, this.props.Channel, input.value);
-        //add here message to UI
         input.value = "";
     }
 
@@ -328,13 +379,46 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupShow")
     }
 
+    ShowCreateChat(event: React.FormEvent<HTMLInputElement>) {
+        (document.getElementById('CreateChatDiv') as HTMLInputElement).className = ("form-popupShow")
+    }
+
     HideSearch(event: React.FormEvent<HTMLSpanElement>) {
         (document.getElementById('SearchDiv') as HTMLInputElement).className = ("form-popupHide")
+    }
+
+    HideCreateChat(event: React.FormEvent<HTMLSpanElement>) {
+        (document.getElementById('CreateChatDiv') as HTMLInputElement).className = ("form-popupHide")
     }
 
     SearchForFriends(event: React.FormEvent<HTMLButtonElement>) {
         let searchPhrase = (document.getElementById('SearchFriendsText') as HTMLInputElement).value;
         this.props.SearchForFriends(searchPhrase, this.state.UserName);
+    }
+
+    CreateChat(event: React.FormEvent<HTMLElement>) {
+        let chatName = (document.getElementById('CreateChatName') as HTMLInputElement).value;
+        if (chatName === "")
+            return "";
+        var checkboxes = document.getElementsByName("friendCheckboxes") as NodeListOf<HTMLInputElement>;
+        var checkboxesChecked = [];
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i]);
+            }
+        }
+        if (checkboxesChecked.length < 1)
+            return;
+        let userList = checkboxesChecked.map(x => x.dataset.friendusername as string);
+        userList.push(this.state.UserName);
+        console.log("send data and create chat" + chatName + "with users" + userList.join(","));
+        this.props.CreateChannel(this.state.UserName, chatName, userList);
+    }
+
+    ChooseFriendToChat(event: React.FormEvent<HTMLElement>) {
+        let friendName = event.currentTarget.dataset.friendusername as string;
+        var checkbox = (document.getElementById(friendName + '_checkbox') as HTMLInputElement);
+        checkbox.checked = !checkbox.checked;
     }
 
     ChooseNewFriend(event: React.FormEvent<HTMLElement>) {
@@ -352,7 +436,6 @@ class MessagesComponent extends React.Component<MessagesProps, MessagesState> {
     }
 
     monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
 }
 
 export default connect(

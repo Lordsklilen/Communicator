@@ -42,8 +42,7 @@ img {
     overflow: hidden;
     border-bottom: 1px solid #c4c4c4;
 }
-
-.recent_heading h4 {
+h4 {
     color: #05728f;
     font-size: 21px;
     margin: auto;
@@ -53,7 +52,6 @@ img {
     border: 1px solid #cdcdcd;
     border-width: 0 0 1px 0;
     width: 80%;
-    /*padding: 2px 0 4px 6px;*/
     background: none;
 }
 
@@ -86,7 +84,12 @@ img {
     margin: auto
 }
 
+.chat_date {
+    font-size: 11px;
+}
+
 .chat_img {
+    display:block;
     float: left;
     width: 11%;
 }

@@ -12,6 +12,7 @@ namespace Communicator.DataProvider.Repositories
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
+
         public UserRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
             _context = context;
@@ -37,10 +38,24 @@ namespace Communicator.DataProvider.Repositories
             };
             user.PasswordHash = hasher.HashPassword(user, password);
             _userManager.CreateAsync(user).Wait();
-            _userManager.AddToRoleAsync(user, ApplicationRole.stadardRole).Wait();
+            if (userName != "Admin")
+                _userManager.AddToRoleAsync(user, ApplicationRole.USER_ROLE).Wait();
+            else
+                _userManager.AddToRoleAsync(user, ApplicationRole.ADMIN_ROLE).Wait();
 
             var res = SignIn(user, password);
             return res;
+        }
+
+        public ApplicationUser Update(ApplicationUser user, string email, string newPassword = "")
+        {
+            user.Email = email;
+            if (newPassword != "" && newPassword != null)
+            {
+                user.PasswordHash = hasher.HashPassword(user, newPassword);
+            }
+            _userManager.UpdateAsync(user).Wait();
+            return user;
         }
 
         public ApplicationUser GetById(string id)
@@ -58,7 +73,6 @@ namespace Communicator.DataProvider.Repositories
             return result;
         }
 
-
         //Friends list
         public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)
         {
@@ -71,7 +85,6 @@ namespace Communicator.DataProvider.Repositories
         // SignIn/Out
         public bool SignIn(ApplicationUser user, string password)
         {
-
             if (user == null)
             {
                 throw new Exception("User does not exist.");
@@ -81,6 +94,21 @@ namespace Communicator.DataProvider.Repositories
             {
                 var result = _signInManager.PasswordSignInAsync(user.UserName, password, false, false).Result;
                 return result.Succeeded;
+            }
+            return false;
+        }
+
+        public bool CheckPassword(ApplicationUser user, string password)
+        {
+
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
+
+            if (hasher.VerifyHashedPassword(user, user.PasswordHash, password) != PasswordVerificationResult.Failed)
+            {
+                return true;
             }
             return false;
         }

@@ -44,7 +44,7 @@ namespace Communicator.Website.Controllers
         //Authorized Methods
         [HttpGet]
         [Route("Api/CheckAuthorization")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public bool CheckAuthorization()
         {
             return true;
@@ -52,7 +52,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/GetUser")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string GetUser([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUser>(json);
@@ -61,7 +61,7 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/SignOut")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string SignOut()
         {
             _userService.SignOutAsync();
@@ -70,11 +70,27 @@ namespace Communicator.Website.Controllers
 
         [HttpPost]
         [Route("Api/GetUsers")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public string CheckAuthorization([FromBody] JsonElement json)
         {
             var request = ToObject<RequestGetUsers>(json);
             return PrepareResponse(_userService.GetUsersById(request));
+        }
+
+        //Form Request
+        [HttpPost]
+        [Route("Api/UpdateUser")]
+        [Authorize(Roles = "User,Admin")]
+        public string UpdateUser([FromForm]RequestUpdateUser requestUpdateUser)
+        {
+            return PrepareResponse(_userService.UpdateUser(requestUpdateUser));
+        }
+
+        [HttpGet]
+        [Route("GetImage/{UserId}")]
+        public IActionResult GetImage(string UserId)
+        {
+            return PhysicalFile(_userService.GetProfileImage(UserId), "image/jpeg");
         }
 
     }

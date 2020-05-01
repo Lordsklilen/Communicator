@@ -9,6 +9,7 @@ import { Route } from 'react-router';
 import LoginComponent from './components/LoginComponent';
 import RegisterComponent from './components/RegisterComponent';
 import MessagesComponent from './components/MessagesComponent';
+import SettingsComponent from './components/SettingsComponent';
 
 import registerServiceWorker from './Configuration/registerServiceWorker';
 
@@ -25,8 +26,9 @@ ReactDOM.render(
         <ConnectedRouter history={history}>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
                 <Route exact path='/' component={LoginComponent} />
-                <Route exact path='/register' component={RegisterComponent} />
-                <Route exact path='/messages' component={MessagesComponent} />
+            <Route exact path='/register' component={RegisterComponent} />
+            <Route exact path='/messages' component={MessagesComponent} />
+            <Route exact path='/settings' component={SettingsComponent} />
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'));
