@@ -9,6 +9,7 @@ namespace Communicator.DataProvider.Repositories
     public class ChannelRepository
     {
         private readonly ApplicationDbContext _context;
+
         public ChannelRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -35,6 +36,7 @@ namespace Communicator.DataProvider.Repositories
             _context.SaveChanges();
             return channel;
         }
+
         public ICollection<Channel> GetUserChannels(string UserId)
         {
             var query = _context.Channels

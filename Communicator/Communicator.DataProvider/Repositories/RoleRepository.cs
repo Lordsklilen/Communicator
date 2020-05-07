@@ -7,6 +7,7 @@ namespace Communicator.DataProvider.Repositories
     public class RoleRepository
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
+
         public RoleRepository(RoleManager<ApplicationRole> roleManager)
         {
             _roleManager = roleManager;
@@ -30,6 +31,7 @@ namespace Communicator.DataProvider.Repositories
             }).Result;
             return response;
         }
+
         public void CreateDefaultRoles()
         {
             try

@@ -7,7 +7,6 @@ namespace Communicator.DataProvider.Repositories
 {
     public class FileRepository
     {
-
         public void SaveImage(IFormFile file, string UserId)
         {
             var filename = UserId + ".jpg";//Path.GetExtension(file.FileName);

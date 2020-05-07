@@ -21,8 +21,6 @@ namespace Communicator.DataProvider.Repositories
             _signInManager = signInManager;
         }
 
-
-        //Users
         public bool Create(string userName, string email, string password)
         {
             var existRole = _userManager.FindByNameAsync(userName).Result;
@@ -58,11 +56,6 @@ namespace Communicator.DataProvider.Repositories
             _userManager.UpdateAsync(user).Wait();
             return user;
         }
-
-        public ApplicationUser GetById(string id)
-        {
-            return _userManager.FindByIdAsync(id).Result;
-        }
         public void Delete(ApplicationUser user)
         {
             var appUser = _context.Users
@@ -83,6 +76,11 @@ namespace Communicator.DataProvider.Repositories
             _context.SaveChanges();
         }
 
+        public ApplicationUser GetById(string id)
+        {
+            return _userManager.FindByIdAsync(id).Result;
+        }
+
         public HashSet<ApplicationUser> GetById(string[] ids)
         {
             var result = new HashSet<ApplicationUser>();
@@ -92,13 +90,13 @@ namespace Communicator.DataProvider.Repositories
             }
             return result;
         }
+
         public IEnumerable<ApplicationUser> GetAllUsers()
         {
             var result = _context.Users.AsEnumerable();
             return result;
         }
 
-        //Friends list
         public IEnumerable<ApplicationUser> GetUsersById(string word, string userId)
         {
             var users = _context.Users
@@ -107,7 +105,6 @@ namespace Communicator.DataProvider.Repositories
             return users;
         }
 
-        // SignIn/Out
         public bool SignIn(ApplicationUser user, string password)
         {
             if (user == null)

@@ -93,7 +93,6 @@ namespace Communicator.Website.Controllers
             return PhysicalFile(_userService.GetProfileImage(UserId), "image/jpeg");
         }
 
-
         //Admin Only
 
         [HttpPost]
